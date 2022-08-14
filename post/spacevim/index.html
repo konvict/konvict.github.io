@@ -1,0 +1,286 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>SpaceVIM | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    SpaceVIM
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/1iaNCLscEG/" class="post-tags">
+                            # Shell
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>入门指南 | SpaceVim</p>
+<p><strong><a href="https://spacevim.org/cn/">主页</a></strong> | <strong><a href="https://spacevim.org/cn/about/">关于我们</a></strong> | <strong><a href="https://spacevim.org/cn/quick-start-guide/">入门指南</a></strong> | <strong><a href="https://spacevim.org/cn/documentation/">使用文档</a></strong> | <strong><a href="https://spacevim.org/cn/development/">开发指南</a></strong> | <strong><a href="https://spacevim.org/cn/community/">用户社区</a></strong> | <strong><a href="https://spacevim.org/cn/sponsors/">赞助</a></strong></p>
+<hr>
+<h1 id="主页"><a href="https://spacevim.org/cn/quick-start-guide/../">主页</a> » 入门指南</h1>
+<p>如果你从未使用过 SpaceVim，建议先阅读这篇简短的教程。这篇教程主要讲述： 如何安装 SpaceVim，SpaceVim 的入门配置以及 SpaceVim 常用学习资源。</p>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97">安装指南</a>
+<ul>
+<li><a href="#linux-%E6%88%96-macos">Linux 或 macOS</a></li>
+<li><a href="#windows">Windows</a></li>
+</ul>
+</li>
+<li><a href="#docker-%E6%94%AF%E6%8C%81">Docker 支持</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE">基本配置</a></li>
+<li><a href="#%E5%9C%A8%E7%BA%BF%E6%95%99%E7%A8%8B">在线教程</a></li>
+<li><a href="#%E5%85%B6%E4%BB%96%E8%B5%84%E6%BA%90">其他资源</a></li>
+</ul>
+<h2 id="安装指南">安装指南</h2>
+<p>在安装 SpaceVim 之前，你需要确保电脑上已经安装了 <code>Git</code> 和 <code>cURL</code>。这两个工具用来 下载插件以及字体。</p>
+<p>如果在终端中使用 Vim 或 Neovim，还需要设置终端的字体。</p>
+<h3 id="linux-或-macos">Linux 或 macOS</h3>
+<pre><code>curl -sLf https://spacevim.org/cn/install.sh | bash
+
+</code></pre>
+<p>安装结束后，初次打开 <code>Vim</code> 或者 <code>gVim</code> 时，SpaceVim 会<strong>自动</strong>下载并安装插件。</p>
+<p>如果需要获取安装脚本的帮助信息，可以执行如下命令，包括定制安装、更新和卸载等。</p>
+<pre><code>curl -sLf https://spacevim.org/cn/install.sh | bash -s -- -h
+
+</code></pre>
+<h3 id="windows">Windows</h3>
+<p>Windows 下最快捷的安装方法是下载安装脚本 <a href="https://spacevim.org/cn/install.cmd">install.cmd</a> 并运行。</p>
+<h2 id="docker-支持">Docker 支持</h2>
+<pre><code>docker pull spacevim/spacevim
+docker run -it --rm spacevim/spacevim nvim
+
+</code></pre>
+<p>也可以通过挂载的方式载入本地配置：</p>
+<pre><code>docker run
+  \ -it -v
+  \ ~/.SpaceVim.d:/home/spacevim/.SpaceVim.d
+  \ --rm
+  \ spacevim/spacevim nvim
+
+</code></pre>
+<h2 id="基本配置">基本配置</h2>
+<p>SpaceVim 的默认配置文件为 <code>~/.SpaceVim.d/init.toml</code>。下面为一简单的配置示例。 如果需要查阅更多 SpaceVim 配置相关的信息，请阅读 SpaceVim 用户文档。</p>
+<pre><code># 这是一个基础的 SpaceVim 配置示例
+
+# 所有的 SpaceVim 选项都列在 [options] 之下
+[options]
+    # 设置 SpaceVim 主题及背景，默认的主题是 gruvbox，如果你需要使用更
+    # 多的主题，你可以载入 colorscheme 模块
+    colorscheme = &quot;gruvbox&quot;
+    # 背景可以取值 &quot;dark&quot; 或 &quot;light&quot;
+    colorscheme_bg = &quot;dark&quot;
+    # 启用/禁用终端真色，在目前大多数终端下都是支持真色的，当然也有
+    # 一小部分终端不支持真色，如果你的 SpaceVim 颜色看上去比较怪异
+    # 可以禁用终端真色，将下面的值设为 false
+    enable_guicolors = true
+    # 设置状态栏上分割符号形状，如果字体安装失败，可以将值设为 &quot;nil&quot; 以
+    # 禁用分割符号，默认为箭头 &quot;arrow&quot;
+    statusline_separator = &quot;nil&quot;
+    statusline_inactive_separator = &quot;bar&quot;
+    # 设置顶部标签列表序号类型，有以下五种类型，分别是 0 - 4
+    # 0: 1 ➛ ➊
+    # 1: 1 ➛ ➀
+    # 2: 1 ➛ ⓵
+    # 3: 1 ➛ ¹
+    # 4: 1 ➛ 1
+    buffer_index_type = 4
+    # 显示/隐藏顶部标签栏上的文件类型图标，这一图标需要安装 nerd fonts，
+    # 如果未能成功安装这一字体，可以隐藏图标
+    enable_tabline_filetype_icon = true
+    # 是否在状态栏上显示当前模式，默认情况下，不显示 Normal/Insert 等
+    # 字样，只以颜色区分当前模式
+    enable_statusline_mode = false
+
+# SpaceVim 模块设置，主要包括启用/禁用模块
+
+# 启用 autocomplete 模块，启用模块时，可以列出一些模块选项，并赋值，
+# 关于模块的选项，请阅读各个模块的文档
+[[layers]]
+    name = &quot;autocomplete&quot;
+    auto-completion-return-key-behavior = &quot;complete&quot;
+    auto-completion-tab-key-behavior = &quot;cycle&quot;
+
+# 禁用 shell 模块，禁用模块时，需要加入 enable = false
+[[layers]]
+    name = &quot;shell&quot;
+    enable = false
+
+# 添加自定义插件
+[[custom_plugins]]
+    name = &quot;lilydjwg/colorizer&quot;
+    merged = false
+
+</code></pre>
+<h2 id="在线教程">在线教程</h2>
+<p>以下主要为 SpaceVim 的基本使用教程，侧重于各种语言开发环境的搭建，可以理解为 SpaceVim 用户文档的精简版，主要包括以下内容：</p>
+<ul>
+<li><a href="https://spacevim.org/cn/quick-start-guide/../use-vim-as-ide/">使用 SpaceVim 搭建基本的开发环境</a>：涵盖一些窗口及文件的常规操作。</li>
+</ul>
+<p>针对不同语言，一些基础的配置及使用技巧：</p>
+<ul>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-typescript-ide/">使用 Vim 搭建 TypeScript 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-rust-ide/">使用 Vim 搭建 Rust 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-c-cpp-ide/">使用 Vim 搭建 C/C++ 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-php-ide/">使用 Vim 搭建 PHP 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-ruby-ide/">使用 Vim 搭建 Ruby 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-perl-ide/">使用 Vim 搭建 Perl 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-coffeescript-ide/">使用 Vim 搭建 CoffeeScript 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-javascript-ide/">使用 Vim 搭建 JavaScript 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-lua-ide/">使用 Vim 搭建 Lua 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-go-ide/">使用 Vim 搭建 Go 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-python-ide/">使用 Vim 搭建 Python 开发环境</a></li>
+<li><a href="https://spacevim.org/cn/use-vim-as-a-java-ide/">使用 Vim 搭建 Java 开发环境</a></li>
+</ul>
+<h2 id="其他资源">其他资源</h2>
+<ul>
+<li><a href="https://github.com/Gabirel/Hack-SpaceVim">Hack-SpaceVim</a>. Tell you how to hack SpaceVim.</li>
+<li><a href="https://everettjf.gitbooks.io/spacevimtutorial/content/">SpaceVim 入门教程</a>：everettjf 所著的 SpaceVim 入门教程。</li>
+</ul>
+<p>网站源码位于 Github, <a href="https://github.com/SpaceVim/SpaceVim/edit/master/docs/cn/quick-start-guide.md">帮助改进本页面</a> — 网站主题: <a href="https://twitter.com/michigangraham">mattgraham</a>,</p>
+<p><a href="https://gitter.im/SpaceVim/cn">Open Chat</a></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/python- analysis-nginx-log/" class="post-title gt-a-link">
+                    Python 分析 Nignx 日志
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

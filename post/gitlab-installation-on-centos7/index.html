@@ -1,0 +1,529 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Gitlab Installation on CentOS7 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Gitlab Installation on CentOS7
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="centos-7-安装-gitlab">CentOS 7 安装 Gitlab</h1>
+<h2 id="安装基本系统与依赖包">安装基本系统与依赖包</h2>
+<h3 id="安装-gitlab-依赖的工具">安装 Gitlab 依赖的工具</h3>
+<pre><code>yum -y update
+yum -y groupinstall 'Development Tools'
+yum -y install readline readline-devel ncurses-devel gdbm-devel glibc-devel tcl-devel openssl-devel curl-devel expat-devel db4-devel byacc sqlite-devel libyaml libyaml-devel libffi libffi-devel libxml2 libxml2-devel libxslt libxslt-devel libicu libicu-devel system-config-firewall-tui git redis ruby sudo wget crontabs logwatch logrotate perl-Time-HiRes
+
+</code></pre>
+<h3 id="安装-redis">安装 Redis</h3>
+<p>访问 <a href="http://www.redis.io/download"></a><a href="http://www.redis.io/download">http://www.redis.io/download</a>，下载 <strong>Redis</strong> 源代码。</p>
+<pre><code>wget http://download.redis.io/releases/redis-3.0.0.tar.gz
+tar zxvf redis-3.0.0.tar.gz
+cd redis-3.0.0
+make
+
+</code></pre>
+<p>若在编译过程中出错，则可以执行下面的命令：</p>
+<pre><code>sudo make test
+</code></pre>
+<h4 id="安装">安装：</h4>
+<pre><code>sudo make install
+sudo ./utils/install_server.sh
+
+</code></pre>
+<h4 id="配置">配置</h4>
+<p>创建 <code>/etc/init.d/redis</code> 并使用下面的代码作为启动脚本。</p>
+<p>添加如下内容：</p>
+<pre><code class="language-bash">###########################
+PATH=/usr/local/bin:/sbin:/usr/bin:/bin
+
+REDISPORT=6379
+EXEC=/usr/local/bin/redis-server
+REDIS_CLI=/usr/local/bin/redis-cli
+
+PIDFILE=/var/run/redis.pid
+CONF=&quot;/etc/redis/6379.conf&quot;
+
+case &quot;$1&quot; in
+    start)
+        if [ -f $PIDFILE ]
+        then
+                echo &quot;$PIDFILE exists, process is already running or crashed&quot;
+        else
+                echo &quot;Starting Redis server...&quot;
+                $EXEC $CONF
+        fi
+        if [ &quot;$?&quot;=&quot;0&quot; ]
+        then
+              echo &quot;Redis is running...&quot;
+        fi
+        ;;
+    stop)
+        if [ ! -f $PIDFILE ]
+        then
+                echo &quot;$PIDFILE does not exist, process is not running&quot;
+        else
+                PID=$(cat $PIDFILE)
+                echo &quot;Stopping ...&quot;
+                $REDIS_CLI -p $REDISPORT SHUTDOWN
+                while [ -x ${PIDFILE} ]
+               do
+                    echo &quot;Waiting for Redis to shutdown ...&quot;
+                    sleep 1
+                done
+                echo &quot;Redis stopped&quot;
+        fi
+        ;;
+   restart|force-reload)
+        ${0} stop
+        ${0} start
+        ;;
+  *)
+    echo &quot;Usage: /etc/init.d/redis {start|stop|restart|force-reload}&quot; &gt;&amp;2
+        exit 1
+esac
+##############################
+
+</code></pre>
+<p>保存后，添加可执行权限：</p>
+<pre><code>sudo chmod +x /etc/init.d/redis
+
+</code></pre>
+<p>确保 <code>redis</code> 能随系统启动：</p>
+<pre><code>vi /etc/rc.d/rc.local
+
+</code></pre>
+<p>在文件末尾添加下面这行：</p>
+<pre><code>service redis start
+
+</code></pre>
+<p>然后使用上面同样的命令启动 <code>redis</code> 服务：</p>
+<pre><code>service redis start
+
+</code></pre>
+<h3 id="安装邮件服务器">安装邮件服务器</h3>
+<pre><code>yum -y install postfix
+
+</code></pre>
+<h3 id="安装git">安装Git</h3>
+<p>先删除系统中原有的老版本 <code>git</code>：</p>
+<pre><code>yum -y remove git
+yum install zlib-devel perl-CPAN gettext curl-devel expat-devel gettext-devel openssl-devel
+
+</code></pre>
+<p>从官方网站下载源代码进行：</p>
+<pre><code>curl --progress https://www.kernel.org/pub/software/scm/git/git-2.4.0.tar.gz | tar xz
+cd git-2.4.0/
+./configure
+make
+make prefix=/usr/local install
+
+</code></pre>
+<p>然后使用下面这个命令检测安装是否有效：</p>
+<pre><code>which git
+
+</code></pre>
+<h2 id="安装-ruby">安装 ruby</h2>
+<p>如果 ruby 的版本低于 <code>2.0</code> 的话，则需要重新安装 <code>ruby</code>。</p>
+<pre><code>cd ~
+curl --progress ftp://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.2.tar.gz | tar xz
+cd ruby-2.2.2
+./configure --disable-install-rdoc
+make
+make prefix=/usr/local install
+
+</code></pre>
+<h2 id="为-gitlab-添加系统用户">为 Gitlab 添加系统用户</h2>
+<pre><code>adduser --system --shell /bin/bash --comment 'GitLab' --create-home --home-dir /home/git/ git
+
+</code></pre>
+<p>为了包含/usr/local/bin到git用户的$PATH，一个方法是编辑超级用户文件。以管理员身份运行：</p>
+<pre><code>visudo
+
+</code></pre>
+<p>然后搜索：</p>
+<pre><code>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
+
+</code></pre>
+<p>将其改成：</p>
+<pre><code>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+</code></pre>
+<h2 id="安装数据库">安装数据库</h2>
+<p>MySQL 已经不再包含在 CentOS 7 的源中，而改用了 MariaDB，先搜索 <code>MariaDB</code> 现有的包：</p>
+<pre><code>rpm -qa | grep mariadb
+
+</code></pre>
+<p>然后全部删除：</p>
+<pre><code>rpm -e --nodeps mariadb-*
+
+</code></pre>
+<p>然后创建 <code>/etc/yum.repos.d/MariaDB.repo</code>：</p>
+<pre><code>vi /etc/yum.repos.d/MariaDB.repo
+
+</code></pre>
+<p>将以下内容添加至该文件中：</p>
+<pre><code># MariaDB 10.0 CentOS repository list - created 2015-05-04 19:16 UTC
+# http://mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.0/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+</code></pre>
+<p>然后运行下面命令安装 <code>MariaDB 10.0</code>：</p>
+<pre><code>sudo yum install MariaDB-server MariaDB-client
+
+</code></pre>
+<p>然后启动 MariaDB 服务：</p>
+<pre><code>service mysql start
+
+</code></pre>
+<p>接着运行 <code>mysql_secure_installation</code>：</p>
+<pre><code>mysql_secure_installation
+
+</code></pre>
+<p>登录 MariaDB 并创建相应的数据库用户与数据库：</p>
+<pre><code>mysql -uroot -p
+CREATE USER 'git'@'localhost' IDENTIFIED BY '$password';
+SET storage_engine=INNODB;
+CREATE DATABASE IF NOT EXISTS `gitlabhq_production` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;
+GRANT SELECT, LOCK TABLES, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `gitlabhq_production`.* TO 'git'@'localhost';
+\q
+
+</code></pre>
+<p>尝试使用新用户连接数据库：</p>
+<pre><code>sudo -u git -H mysql -u git -p -D gitlabhq_production
+\q
+
+</code></pre>
+<h2 id="安装-gitlab">安装 Gitlab</h2>
+<h3 id="克隆源">克隆源</h3>
+<pre><code>sudo -u -git cd /home/git
+sudo -u git -H git clone https://gitlab.com/gitlab-org/gitlab-ce.git -b 7-10-stable gitlab
+
+</code></pre>
+<h3 id="配置-2">配置</h3>
+<pre><code class="language-bash">cd /home/git/gitlab
+
+# Copy the example GitLab config
+# 复制GitLab的示例配置文件
+sudo -u git -H cp config/gitlab.yml.example config/gitlab.yml
+
+# Make sure to change &quot;localhost&quot; to the fully-qualified domain name of your host serving GitLab where necessary
+# 确保修改“localhost”为你的GitLab主机的FQDN
+#
+# If you want to use https make sure that you set `https` to `true`. See #using-https for all necessary details.
+# 如果你想要使用https确保你设置了`https`为`true`。具体必要的细节参见#using-https
+#
+# If you installed Git from source, change the git bin_path to /usr/local/bin/git
+# 如果你从源代码安装了Git，修改git的bin_path为/usr/local/bin/git
+sudo -u git -H editor config/gitlab.yml
+
+# Make sure GitLab can write to the log/ and tmp/ directories
+# 确保GitLab可以写入log/和temp/目录
+chown -R git {log,tmp}
+chmod -R u+rwX  {log,tmp}
+
+# Create directory for satellites
+# 为卫星(?)创建目录
+sudo -u git -H mkdir /home/git/gitlab-satellites
+chmod u+rwx,g+rx,o-rwx /home/git/gitlab-satellites
+
+# Make sure GitLab can write to the tmp/pids/ and tmp/sockets/ directories
+# 确保GitLab可以写入tmp/pids/和temp/sockets/目录
+chmod -R u+rwX  tmp/{pids,sockets}
+
+# Make sure GitLab can write to the public/uploads/ directory
+# 确保GitLab可以写入public/uploads/目录
+chmod -R u+rwX  public/uploads
+
+# Copy the example Unicorn config
+# 复制Unicorn的示例配置文件
+sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
+
+# Enable cluster mode if you expect to have a high load instance
+# Ex. change amount of workers to 3 for 2GB RAM server
+# 启用集群模式如果你期望拥有一个高负载实例
+# 附：修改worker的数量到3用于2GB内存的服务器
+sudo -u git -H editor config/unicorn.rb
+
+# Copy the example Rack attack config
+# 复制Rack attack的示例配置文件
+sudo -u git -H cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb
+
+# Configure Git global settings for git user, useful when editing via web
+# Edit user.email according to what is set in config/gitlab.yml
+# 为git用户配置Git全局设定，当通过web修改时有用
+# 修改user.email根据config/gitlab.yml中的设定
+sudo -u git -H git config --global user.name &quot;GitLab&quot;
+sudo -u git -H git config --global user.email &quot;gitlab@localhost&quot;
+sudo -u git -H git config --global core.autocrlf input
+
+</code></pre>
+<h2 id="数据库配置">数据库配置</h2>
+<pre><code># MySQL only:
+# 仅限MySQL：
+sudo -u git cp config/database.yml.mysql config/database.yml
+
+# MySQL and remote PostgreSQL only:
+# Update username/password in config/database.yml.
+# You only need to adapt the production settings (first part).
+# If you followed the database guide then please do as follows:
+# Change 'secure password' with the value you have given to $password
+# You can keep the double quotes around the password
+# 仅限MySQL和远程PostgreSQL：
+# 在config/database.yml中更新用户名/密码；
+# 你只需要适配生产设定（第一部分）；
+# 如果你跟从数据库向导，请按以下操作：
+# 修改'secure password'使用你刚才设定的$password；
+# 你可以保留密码两端的双引号。
+sudo -u git -H editor config/database.yml
+
+# PostgreSQL and MySQL:
+# Make config/database.yml readable to git only
+# PostgreSQL和MySQL：
+# 设置config/database.yml仅对git可读。
+sudo -u git -H chmod o-rwx config/database.yml
+
+</code></pre>
+<h3 id="安装-gems">安装 Gems</h3>
+<pre><code>cd /home/git/gitlab
+
+# For users from China mainland only
+# 仅限中国大陆用户
+nano /home/git/gitlab/Gemfile
+source &quot;http://ruby.taobao.org&quot; // 原始 source &quot;https://rubygems.org/&quot;
+
+# For MySQL (note, the option says &quot;without ... postgres&quot;)
+sudo -u git -H bundle install --deployment --without development test postgres aws
+
+</code></pre>
+<h2 id="install-gitlab-shell">Install GitLab shell</h2>
+<h3 id="安装gitlab-shell">安装GitLab Shell</h3>
+<p>GitLab Shell是一个专门为GitLab开发的SSH访问和源管理软件。</p>
+<pre><code># Go to the Gitlab installation folder:
+# 转到GitLab安装目录：
+cd /home/git/gitlab
+
+# For users from China mainland only
+# 仅限中国大陆用户
+nano /home/git/gitlab/Gemfile
+source &quot;http://ruby.taobao.org&quot; // 原始 source &quot;https://rubygems.org/&quot;
+
+# Run the installation task for gitlab-shell (replace `REDIS_URL` if needed):
+# 运行gitlab-shell的安装任务（替换`REDIS_URL`如果有需要的话）：
+sudo -u git -H bundle exec rake gitlab:shell:install[v1.9.6] REDIS_URL=redis://localhost:6379 RAILS_ENV=production
+
+# By default, the gitlab-shell config is generated from your main gitlab config.
+# 默认的，gitlab-shell的配置文件是由你的gitlab主配置文件生成的。
+#
+# Note: When using GitLab with HTTPS please change the following:
+# - Provide paths to the certificates under `ca_file` and `ca_path options.
+# - The `gitlab_url` option must point to the https endpoint of GitLab.
+# - In case you are using self signed certificate set `self_signed_cert` to `true`.
+# See #using-https for all necessary details.
+# 提示：当通过HTTPS使用GitLab时，请做出如下更改：
+# - 提供证书的路径在`ca_file`和`ca_path`选项；
+# - `gitlab_url`选项必须指向GitLab的https端点；
+# - 如果你使用自签名的证书，设置`self-signed_cert`为`true`。
+# 所有必需的具体细节参见#using-https
+#
+# You can review (and modify) it as follows:
+# 你可以检查（并修改该）通过以下方法：
+sudo -u git -H editor /home/git/gitlab-shell/config.yml
+
+# Ensure the correct SELinux contexts are set
+# Read http://wiki.centos.org/HowTos/Network/SecuringSSH
+# 确保正确的SELinux上下文被设置
+# 阅读http://wiki.centos.org/HowTos/Network/SecuringSSH
+restorecon -Rv /home/git/.ssh
+
+</code></pre>
+<h3 id="初始化数据库和激活高级功能">初始化数据库和激活高级功能</h3>
+<pre><code>sudo -u git -H bundle exec rake gitlab:setup RAILS_ENV=production
+# Type 'yes' to create the database tables.
+# When done you see 'Administrator account created:'
+
+</code></pre>
+<p>提示：你可以设置管理员密码通过在环境变量GITLAB_ROOT_PASSWORD中提供，例如：</p>
+<pre><code>sudo -u git -H bundle exec rake gitlab:setup RAILS_ENV=production GITLAB_ROOT_PASSWORD=newpassword
+
+</code></pre>
+<h3 id="安装初始化脚本">安装初始化脚本</h3>
+<p>下载初始化脚本（将放在/etc/init.d/gitlab）：</p>
+<pre><code>sudo cp lib/support/init.d/gitlab /etc/init.d/gitlab
+chmod +x /etc/init.d/gitlab
+chkconfig --add gitlab
+
+</code></pre>
+<p>设置GitLab开机启动：</p>
+<pre><code>chkconfig gitlab on
+
+</code></pre>
+<p>设置日志翻转</p>
+<pre><code>cp lib/support/logrotate/gitlab /etc/logrotate.d/gitlab
+
+</code></pre>
+<h3 id="检查应用状态">检查应用状态</h3>
+<pre><code>sudo -u git -H bundle exec rake gitlab:env:info RAILS_ENV=production
+
+</code></pre>
+<h3 id="编译静态文件">编译静态文件</h3>
+<pre><code>sudo -u git -H bundle exec rake assets:precompile RAILS_ENV=production
+
+</code></pre>
+<h3 id="启动实例">启动实例</h3>
+<pre><code>/etc/init.d/gitlab start
+
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/speed-test/" class="post-title gt-a-link">
+                    测速
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

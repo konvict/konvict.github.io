@@ -1,0 +1,550 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Install Redmine on CentOS7 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Install Redmine on CentOS7
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="centos-7安装redmine">CentOS 7安装Redmine</h1>
+<p>https://blog.csdn.net/h1101723183/article/details/80954587</p>
+<hr>
+<h2 id="a-idt0aa-idt0a环境"><a id="t0"></a><a id="t0"></a>环境</h2>
+<ol>
+<li>CentOS 7</li>
+<li>MariaDB</li>
+<li>Ruby 2.4.2</li>
+<li>Redmine 3.4.3</li>
+<li>Puma</li>
+</ol>
+<h2 id="a-idt1aa-idt1a连接服务器"><a id="t1"></a><a id="t1"></a>连接服务器</h2>
+<ol>
+<li>
+<p>连接服务器</p>
+<pre><code>ssh root@192.168.31.1331
+</code></pre>
+</li>
+</ol>
+<h2 id="a-idt2aa-idt2a启动mariadb"><a id="t2"></a><a id="t2"></a>启动MariaDB</h2>
+<ol>
+<li>
+<p>首先启动MariaDB</p>
+<pre><code>systemctl start mariadb1
+</code></pre>
+</li>
+<li>
+<p>查看MariaDB的状态</p>
+<pre><code>systemctl status mariadb1
+</code></pre>
+</li>
+<li>
+<p>设置开机启动</p>
+<pre><code>systemctl enable mariadb1
+</code></pre>
+</li>
+<li>
+<p>登陆mysql，默认密码为空，直接回车进入</p>
+<pre><code>mysql -u root -p 1
+</code></pre>
+</li>
+<li>
+<p>创建redmine数据库</p>
+<pre><code>CREATE DATABASE redmine CHARACTER SET utf8;
+CREATE USER 'redmine'@'localhost' IDENTIFIED BY 'redmine';
+GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'localhost';123
+</code></pre>
+</li>
+</ol>
+<h2 id="a-idt3aa-idt3a安装ruby"><a id="t3"></a><a id="t3"></a>安装Ruby</h2>
+<ol>
+<li>
+<p>安装开发工具</p>
+<pre><code>yum groupinstall &quot;Development tools&quot;
+yum -y install zlib-devel curl-devel openssl-devel mysql-devel12
+</code></pre>
+</li>
+<li>
+<p>下载ruby-2.4.2</p>
+<pre><code>wget https://cache.ruby-lang.org/pub/ruby/2.4/ruby-2.4.2.tar.gz1
+</code></pre>
+</li>
+<li>
+<p>编译安装ruby</p>
+<pre><code>tar -zxvf ruby-2.4.2.tar.gz
+cd ruby-2.4.2/
+sudo ./configure 
+sudo make
+sudo make install12345
+</code></pre>
+</li>
+<li>
+<p>配置gem源</p>
+<pre><code>gem sources --add https://gems.ruby-china.org/ --remove https://rubygems.org/
+gem sources -l12
+</code></pre>
+</li>
+</ol>
+<h2 id="a-idt4aa-idt4a安装redmine"><a id="t4"></a><a id="t4"></a>安装Redmine</h2>
+<ol>
+<li>
+<p>参考</p>
+<blockquote>
+<p><a href="http://www.redmine.org/projects/redmine/wiki/RedmineInstall">http://www.redmine.org/projects/redmine/wiki/RedmineInstall</a></p>
+</blockquote>
+</li>
+<li>
+<p>下载Redmine</p>
+<pre><code>cd ~
+wget http://www.redmine.org/releases/redmine-3.4.3.tar.gz12
+</code></pre>
+</li>
+<li>
+<p>解压redmine包</p>
+<pre><code>tar -zxvf redmine-3.4.3.tar.gz1
+</code></pre>
+</li>
+<li>
+<p>将redmine移动到/var目录下</p>
+<pre><code>mv redmine-3.4.3 /var/redmine1
+</code></pre>
+</li>
+<li>
+<p>拷贝 config/database.yml.example 为 config/database.yml</p>
+<pre><code>cd /var/redmine/config/ 
+cp database.yml.example database.yml12
+</code></pre>
+</li>
+<li>
+<p>编辑数据库配置文件</p>
+<pre><code>vi database.yml1
+</code></pre>
+<ol>
+<li>配置数据库</li>
+</ol>
+<pre><code>production:
+  adapter: mysql2
+  database: redmine
+  host: localhost
+  username: redmine
+  password: &quot;redmine&quot;
+  encoding: utf81234567
+</code></pre>
+</li>
+<li>
+<p>安装bundle</p>
+<pre><code>cd /var/redmine
+gem install bundler12
+</code></pre>
+</li>
+<li>
+<p>配置bundler源</p>
+<pre><code>bundle config mirror.https://rubygems.org https://gems.ruby-china.org1
+</code></pre>
+</li>
+<li>
+<p>安装redmine依赖</p>
+<pre><code>bundle install --without development test rmagick1
+</code></pre>
+</li>
+<li>
+<p>初始化数据库</p>
+<pre><code>
+# 生成秘钥
+
+bundle exec rake generate_secret_token
+
+
+# 初始化数据库
+
+RAILS_ENV=production bundle exec rake db:migrate123456789
+</code></pre>
+</li>
+<li>
+<p>用以下命令配置为中文，输入zh</p>
+<pre><code>RAILS_ENV=production bundle exec rake redmine:load_default_data1
+</code></pre>
+</li>
+<li>
+<p>设置权限</p>
+<pre><code>
+# 创建目录
+
+mkdir -p tmp tmp/pdf public/plugin_assets
+
+
+# 设置权限
+
+sudo chmod -R 755 files log tmp public/plugin_assets123456789
+</code></pre>
+</li>
+<li>
+<p>测试运行redmine</p>
+<pre><code>bundle exec rails server webrick -e production
+
+
+# e.g，我的主机是192.168.31.133，用以下命令绑定80端口
+
+bundle exec rails server webrick -e production -p 80 -b 192.168.31.133123456
+</code></pre>
+</li>
+</ol>
+<h2 id="a-idt5aa-idt5a使用puma运行redmine"><a id="t5"></a><a id="t5"></a>使用puma运行redmine</h2>
+<ol>
+<li>
+<p>Puma参考</p>
+<blockquote>
+<p><a href="https://github.com/puma/puma">https://github.com/puma/puma</a></p>
+</blockquote>
+</li>
+<li>
+<p>添加gem puma到Gemfile</p>
+<pre><code>cd /var/redmine/
+vi Gemfile12
+</code></pre>
+<ol>
+<li>添加puma</li>
+</ol>
+<pre><code>gem &quot;puma&quot;1
+</code></pre>
+</li>
+<li>
+<p>重新运行安装依赖</p>
+<pre><code>bundle install --without development test rmagick1
+</code></pre>
+</li>
+<li>
+<p>配置puma.rb</p>
+<pre><code>vi config/puma.rb1
+</code></pre>
+<ol>
+<li>puma.rb</li>
+</ol>
+<pre><code>
+#!/usr/bin/env puma
+
+
+
+# The directory to operate out of.
+
+#
+
+# The default is the current directory.
+
+#
+directory '/var/redmine'
+
+
+# Set the environment in which the rack's app will run. The value must be a string.
+
+#
+
+# The default is &quot;development&quot;.
+
+#
+environment 'production'
+
+
+# Daemonize the server into the background. Highly suggest that
+
+
+# this be combined with &quot;pidfile&quot; and &quot;stdout_redirect&quot;.
+
+#
+
+# The default is &quot;false&quot;.
+
+#
+
+# daemonize
+
+daemonize true
+
+
+# Store the pid of the server in the file at &quot;path&quot;.
+
+#
+pidfile '/var/redmine/tmp/pids/puma.pid'
+
+
+# Use &quot;path&quot; as the file to store the server info state. This is
+
+
+# used by &quot;pumactl&quot; to query and control the server.
+
+#
+state_path '/var/redmine/tmp/pids/puma.state'
+
+
+# Redirect STDOUT and STDERR to files specified. The 3rd parameter
+
+
+# (&quot;append&quot;) specifies whether the output is appended, the default is
+
+
+# &quot;false&quot;.
+
+#
+stdout_redirect '/var/redmine/log/stdout.log', '/var/redmine/log/stderr.log'
+
+# stdout_redirect '/u/apps/lolcat/log/stdout', '/u/apps/lolcat/log/stderr', true
+
+
+
+# Configure &quot;min&quot; to be the minimum number of threads to use to answer
+
+
+# requests and &quot;max&quot; the maximum.
+
+#
+
+# The default is &quot;0, 16&quot;.
+
+#
+threads 2, 32
+
+
+# Bind the server to &quot;url&quot;. &quot;tcp://&quot;, &quot;unix://&quot; and &quot;ssl://&quot; are the only
+
+
+# accepted protocols.
+
+#
+
+# The default is &quot;tcp://0.0.0.0:9292&quot;.
+
+#
+
+# bind 'tcp://0.0.0.0:9292'
+
+
+# bind 'unix:///var/run/puma.sock'
+
+
+# bind 'unix:///var/run/puma.sock?umask=0111'
+
+
+# bind 'ssl://127.0.0.1:9292?key=path_to_key&amp;cert=path_to_cert'
+
+
+# 绑定80端口
+
+bind 'tcp://0.0.0.0:80'
+
+
+# How many worker processes to run.  Typically this is set to
+
+
+# to the number of available cores.
+
+#
+
+# The default is &quot;0&quot;.
+
+#
+workers 3
+
+
+# Preload the application before starting the workers; this conflicts with
+
+
+# phased restart feature. (off by default)
+
+preload_app!
+
+
+# Verifies that all workers have checked in to the master process within
+
+
+# the given timeout. If not the worker process will be restarted. This is
+
+
+# not a request timeout, it is to protect against a hung or dead process.
+
+
+# Setting this value will not protect against slow requests.
+
+
+# Default value is 60 seconds.
+
+#
+worker_timeout 60123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149
+</code></pre>
+</li>
+<li>
+<p>运行</p>
+<pre><code>cd /var/redmine
+
+
+# 运行
+
+bundle exec puma -C config/puma.rb
+
+
+# 停止
+
+bundle exec pumactl --state tmp/pids/puma.state stop
+
+
+# 重启
+
+bundle exec pumactl --state tmp/pids/puma.state restart12345678910111213141516
+</code></pre>
+</li>
+</ol>
+<h2 id="a-idt6aa-idt6a测试"><a id="t6"></a><a id="t6"></a>测试</h2>
+<ol>
+<li>
+<p>访问<a href="http://192.168.31.133/">http://192.168.31.133/</a></p>
+<img width="922" height="617" src=":/603800b94ead4526af63fb2beddfa1ca"/>
+</li>
+</ol>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/gitlab-installation-on-centos7/" class="post-title gt-a-link">
+                    Gitlab Installation on CentOS7
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

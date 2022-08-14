@@ -1,0 +1,260 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>多网卡聚合 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    多网卡聚合
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2022-08-08 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="一-简介">一、简介</h1>
+<p>bonding(绑定)是一种linux系统下的网卡绑定技术，可以把服务器上n个物理网卡在系统内部抽象(绑定)成一个逻辑上的网卡，能够提升网络吞吐量、实现网络冗余、负载等功能，有很多优势。bonding技术是linux系统内核层面实现的，它是一个内核模块(驱动)。使用它需要系统有这个模块,我们可以modinfo命令查看下这个模块的信息, 一般来说都支持。</p>
+<h1 id="二-网卡bonding模式">二、网卡bonding模式</h1>
+<p><strong>1、mode=0（balance-rr）</strong></p>
+<p>表示负载分担round-robin，并且是轮询的方式比如第一个包走eth0，第二个包走eth1，直到数据包发送完毕。</p>
+<p>优点：流量提高一倍</p>
+<p>缺点：需要接入交换机做端口聚合，否则可能无法使用</p>
+<p><strong>2、mode=1（active-backup）</strong></p>
+<p>表示主备模式，即同时只有1块网卡在工作。</p>
+<p>优点：冗余性高</p>
+<p>缺点：链路利用率低，两块网卡只有1块在工作</p>
+<p>二、bond其他模式：</p>
+<p>1、<strong>mode=2(balance-xor)(平衡策略)</strong></p>
+<p>表示XOR Hash负载分担，和交换机的聚合强制不协商方式配合。（需要xmit_hash_policy，需要交换机配置port channel）</p>
+<p>特点：基于指定的传输HASH策略传输数据包。缺省的策略是：(源MAC地址 XOR 目标MAC地址) % slave数量。其他的传输策略可以通过xmit_hash_policy选项指定，此模式提供负载平衡和容错能力</p>
+<p>2、<strong>mode=3(broadcast)(广播策略)</strong></p>
+<p>表示所有包从所有网络接口发出，这个不均衡，只有冗余机制，但过于浪费资源。此模式适用于金融行业，因为他们需要高可靠性的网络，不允许出现任何问题。需要和交换机的聚合强制不协商方式配合。</p>
+<p>特点：在每个slave接口上传输每个数据包，此模式提供了容错能力</p>
+<p>3、<strong>mode=4(802.3ad)(IEEE 802.3ad 动态链接聚合)</strong></p>
+<p>表示支持802.3ad协议，和交换机的聚合LACP方式配合（需要xmit_hash_policy）.标准要求所有设备在聚合操作时，要在同样的速率和双工模式，而且，和除了balance-rr模式外的其它bonding负载均衡模式一样，任何连接都不能使用多于一个接口的带宽。</p>
+<p>特点：创建一个聚合组，它们共享同样的速率和双工设定。根据802.3ad规范将多个slave工作在同一个激活的聚合体下。外出流量的slave选举是基于传输hash策略，该策略可以通过xmit_hash_policy选项从缺省的XOR策略改变到其他策略。需要注意的是，并不是所有的传输策略都是802.3ad适应的，尤其考虑到在802.3ad标准43.2.4章节提及的包乱序问题。不同的实现可能会有不同的适应性。</p>
+<p>必要条件：</p>
+<ul>
+<li>条件1：ethtool支持获取每个slave的速率和双工设定</li>
+<li>条件2：switch(交换机)支持IEEE802.3ad Dynamic link aggregation</li>
+<li>条件3：大多数switch(交换机)需要经过特定配置才能支持802.3ad模式</li>
+</ul>
+<p>4、<strong>mode=5(balance-tlb)(适配器传输负载均衡)</strong></p>
+<p>是根据每个slave的负载情况选择slave进行发送，接收时使用当前轮到的slave。该模式要求slave接口的网络设备驱动有某种ethtool支持；而且ARP监控不可用。</p>
+<p>特点：不需要任何特别的switch(交换机)支持的通道bonding。在每个slave上根据当前的负载（根据速度计算）分配外出流量。如果正在接受数据的slave出故障了，另一个slave接管失败的slave的MAC地址。</p>
+<p>必要条件：</p>
+<ul>
+<li>ethtool支持获取每个slave的速率</li>
+</ul>
+<p>5、<strong>mode=6(balance-alb)(适配器适应性负载均衡)</strong></p>
+<p>在5的tlb基础上增加了rlb(接收负载均衡receiveload balance).不需要任何switch(交换机)的支持。接收负载均衡是通过ARP协商实现的.</p>
+<p>特点：该模式包含了balance-tlb模式，同时加上针对IPV4流量的接收负载均衡(receiveload balance, rlb)，而且不需要任何switch(交换机)的支持。接收负载均衡是通过ARP协商实现的。bonding驱动截获本机发送的ARP应答，并把源硬件地址改写为bond中某个slave的唯一硬件地址，从而使得不同的对端使用不同的硬件地址进行通信。来自服务器端的接收流量也会被均衡。当本机发送ARP请求时，bonding驱动把对端的IP信息从ARP包中复制并保存下来。当ARP应答从对端到达时，bonding驱动把它的硬件地址提取出来，并发起一个ARP应答给bond中的某个slave。使用ARP协商进行负载均衡的一个问题是：每次广播 ARP请求时都会使用bond的硬件地址，因此对端学习到这个硬件地址后，接收流量将会全部流向当前的slave。这个问题可以通过给所有的对端发送更新（ARP应答）来解决，应答中包含他们独一无二的硬件地址，从而导致流量重新分布。当新的slave加入到bond中时，或者某个未激活的slave重新激活时，接收流量也要重新分布。接收的负载被顺序地分布（round robin）在bond中最高速的slave上当某个链路被重新接上，或者一个新的slave加入到bond中，接收流量在所有当前激活的slave中全部重新分配，通过使用指定的MAC地址给每个 client发起ARP应答。下面介绍的updelay参数必须被设置为某个大于等于switch(交换机)转发延时的值，从而保证发往对端的ARP应答不会被switch(交换机)阻截。</p>
+<p><strong>小结：</strong></p>
+<p>mode5和mode6不需要交换机端的设置，网卡能自动聚合。mode4需要支持802.3ad。mode0，mode2和mode3理论上需要静态聚合方式。</p>
+<p><strong>xmit_hash_policy选项说明：</strong></p>
+<p>BONDING_OPTS=&quot;mode=4 miimon=100 xmit_hash_policy=layer2&quot;      2层模式=IP</p>
+<p>BONDING_OPTS=&quot;mode=4 miimon=100 xmit_hash_policy=layer2+3&quot;   2+3层模式 =MAC+IP</p>
+<p>BONDING_OPTS=&quot;mode=4 miimon=100 xmit_hash_policy=layer3+4&quot;      3+4层模式=IP+端口</p>
+<p>根据资料，xmit_hash_policy策略适用于mode2和mode4。</p>
+<p>参数说明：</p>
+<p>1.    layer2：使用二层帧头作为计算分发出口的参数，这导致通过同一个网关的数据流将完全从一个端口发送，为了更加细化分发策略，必须使用一些三层信息，然而却增加了计算开销。</p>
+<p>使用硬件MAC地址的XOR来生成hash。公式为：</p>
+<p>(MACsrc⊕MACdest)% Nslave</p>
+<p>该算法会将某个网络对（network peer）上所有的流量全部分配到同一个slave上。</p>
+<p>2.    layer2+3：在1的基础上增加了三层的ip报头信息，计算量增加了，然而负载却更加均衡了，一个个主机到主机的数据流形成并且同一个流被分发到同一个端口，根据这个思想，如果要使负载更加均衡。</p>
+<p>3.    layer3+4：可以形成一个个端口到端口的流，负载更加均衡。通过TCP及UDP端口及其IP地址进行HASH计算。该策略在可能的时候使用上层协议的信息来生成hash。这将允许特定网络对（network peer）的流量分摊到多个slave上，尽管同一个连接（connection）不会分摊到多个slave上。</p>
+<p>针对未分片的TCP和UDP包的计算公式为：</p>
+<p>((portsrc⊕portdest)⊕(IPsrc⊕IPdest)) % Nslave</p>
+<p>对于已分片TCP或UDP包，以及其他的IP包，源端口和目的端口的信息被忽略了；对于非IP流量，采用和layer2一样的hash策略。</p>
+<h1 id="三-bond配置">三、Bond配置</h1>
+<p>1.生成bond虚拟网卡配置文件</p>
+<pre><code class="language-bash">IP_ADDR=
+BOND_NETMASK=
+GATEW=
+UUID=`uuidgen`cat &lt;&lt;EOF &gt; /etc/sysconfig/network-scripts/ifcfg-bond0
+DEVICE=bond0
+TYPE=Ethernet
+ONBOOT=yesUUID=${UUID}
+BOOTPROTO=&quot;static&quot;
+IPADDR=${IP_ADDR}
+NETMASK=${BOND_NETMASK}
+GATEWAY=${GATEW}
+EOF
+</code></pre>
+<p>2.配置两个或更多网卡到bond0中</p>
+<pre><code class="language-bash">NIC1=
+NIC2=
+cat &lt;&lt;EOF &gt; /etc/sysconfig/network-scripts/ifcfg-${NIC1}
+TYPE=&quot;Ethernet&quot;
+BOOTPROTO=&quot;none&quot;
+DEVICE=${NIC1}
+ONBOOT=&quot;yes&quot;
+MASTER=bond0
+SLAVE=yes
+EOF
+ 
+cat &lt;&lt;EOF &gt; /etc/sysconfig/network-scripts/ifcfg-${NIC2}
+TYPE=&quot;Ethernet&quot;
+BOOTPROTO=&quot;none&quot;
+DEVICE=${NIC2}
+ONBOOT=&quot;yes&quot;
+MASTER=bond0
+SLAVE=yes
+EOF
+</code></pre>
+<p>3.将bond加载到内核</p>
+<pre><code class="language-bash">cat &lt;&lt;EOF &gt; /etc/modprobe.d/modprobe.conf
+alias bond0 bonding
+options bond0 miimon=100 mode=6 fail_over_mac=1
+EOF
+</code></pre>
+<p>4.加载内核</p>
+<pre><code class="language-bash">modprobe bonding &amp;&amp; echo &quot;modprobe bonding&quot; &gt;&gt; /etc/rc.local &amp;&amp; chmod +x /etc/rc.d/rc.local
+</code></pre>
+<p>5.查看状态</p>
+<pre><code class="language-bash">cat /proc/net/bonding/bond0
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/centos7-install-vim9/" class="post-title gt-a-link">
+                    CentOS7 安装高版本VIM
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Install Erlang on CentOS 7 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Install Erlang on CentOS 7
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="centos-安装-erlang">CentOS 安装 Erlang</h1>
+<p>https://ken.io/note/centos7-erlang-install</p>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="#%E8%BD%AF%E4%BB%B6%E4%BB%93%E5%BA%93">软件仓库</a></li>
+<li><a href="#kerl">kerl</a></li>
+<li><a href="#%E7%BC%96%E8%AF%91%E6%BA%90%E4%BB%A3%E7%A0%81">编译源代码</a></li>
+</ol>
+<h2 id="a-id软件仓库a软件仓库"><a id="软件仓库"></a>软件仓库</h2>
+<p>从 CentOS 软件仓库安装 Erlang 是最简单、最省事的。</p>
+<p>不过 CentOS 默认仓库中没有 Erlang，需要我们预先安装 <a href="https://fedoraproject.org/wiki/EPEL">Extra Packages for Enterprise Linux 项目</a>。</p>
+<ol>
+<li>
+<p>安装 <code>epel-release</code></p>
+<pre><code class="language-bash">$ sudo yum install epel-release -y
+
+</code></pre>
+</li>
+<li>
+<p>之后便可以安装 Erlang</p>
+<pre><code class="language-bash">$ yum install erlang -y
+
+</code></pre>
+</li>
+</ol>
+<p>安装完成后，在命令行下输入 <code>erl</code>：</p>
+<pre><code class="language-bash">$ erl
+Erlang R16B03-1 (erts-5.10.4) [source] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+Eshell V5.10.4  (abort with ^G)
+
+</code></pre>
+<p>就可以查看当前安装的 Erlang 版本 - 显然，版本还比较老旧。</p>
+<p>如果你嫌弃 CentOS 软件仓库中的 Erlang 版本过低，我们还可以尝试 Unix/Linux 均可使用的 <a href="https://github.com/kerl/kerl">kerl</a>，又或自己下载源码编译。</p>
+<h2 id="a-idkerlakerl"><a id="kerl"></a>kerl</h2>
+<p>首先请确保你的操作系统上已经安装 <code>curl</code> 与 <code>git</code>。</p>
+<p>下载 <code>kerl</code>：</p>
+<pre><code class="language-bash">$ curl -O https://raw.githubusercontent.com/kerl/kerl/master/kerl
+
+</code></pre>
+<p>然后将 <code>kerl</code> 改成可执行：</p>
+<pre><code class="language-bash">$ chmod a+x kerl
+
+</code></pre>
+<p>执行 <code>kerl list releases</code> 可以查看 Erlang 所有发行版本：</p>
+<pre><code class="language-bash">$ ./kerl list releases
+./kerl list releases
+R10B-0 R10B-10 R10B-1a R10B-2 R10B-3 R10B-4 R10B-5 R10B-6 R10B-7 R10B-8 R10B-9 R11B-0 R11B-1 R11B-2 R11B-3 R11B-4 R11B-5 R12B-0 R12B-1 R12B-2 R12B-3 R12B-4 R12B-5 R13A R13B01 R13B02-1 R13B02 R13B03 R13B04 R13B R14A R14B01 R14B02 R14B03 R14B04 R14B R14B_erts-5.8.1.1 R15B01 R15B02 R15B02_with_MSVCR100_installer_fix R15B03-1 R15B03 R15B R16A_RELEASE_CANDIDATE R16B01 R16B02 R16B03-1 R16B03 R16B 17.0-rc1 17.0-rc2 17.0 17.1 17.3 17.4 17.5 18.0 18.1 18.2 18.2.1 18.3 19.0 19.1 19.2 19.3 20.0 20.1 20.2
+Run './kerl update releases' to update this list from erlang.org
+
+</code></pre>
+<p>有了，最新版本是 20.2，尝试安装：</p>
+<pre><code class="language-bash">$ ./kerl install 20.2
+
+</code></pre>
+<blockquote>
+<p>No build named 20.2</p>
+</blockquote>
+<p>很遗憾，报错。出人意料的是，使用 kerl 安装 Erlang 前，我们需要先编译 Erlang，命令结构是 <code>kerl build &lt;release&gt; &lt;build_name&gt;</code>：</p>
+<pre><code class="language-bash">$ ./kerl build 20.2 20.2
+
+</code></pre>
+<p>很快你就发现该命令报告大量错误。</p>
+<p>这里又是一个意外：kerl 不负责安装<a href="https://github.com/erlang/otp/blob/maint/HOWTO/INSTALL.md#required-utilities">编译 Erlang 必需的依赖</a>，需要我们自己安装：</p>
+<pre><code class="language-bash">$ sudo yum install -y which perl openssl-devel make automake autoconf ncurses-devel gcc
+
+</code></pre>
+<p>安装完编译所需依赖后，重新执行 <code>kerl build</code>：</p>
+<pre><code class="language-bash">$ ./kerl build 20.2 20.2
+
+</code></pre>
+<p>待构建成功后，将新构建出的 20.2 安装到指定目录：</p>
+<pre><code class="language-bash">$ ./kerl install 20.2 ~/erlang
+Installing Erlang/OTP 20.2 (20.2) in /home/sam/erlang...
+You can activate this installation running the following command:
+. /home/sam/erlang/activate
+Later on, you can leave the installation typing:
+kerl_deactivate
+
+</code></pre>
+<p>请注意<strong>提示</strong>，我们还需要执行 <code>. /home/sam/erlang/activate</code> 激活 Erlang。</p>
+<p>你可能会说，看起来 kerl 没比自己编译源代码简单。从定位上说，kerl 更像 Ruby 的 RVM、rbenv 或是 Node.js 的 nvm，能够管理多个 Erlang 版本 - 而自己编译源码的话，就没这么方便。</p>
+<h2 id="a-id编译源代码a编译源代码"><a id="编译源代码"></a>编译源代码</h2>
+<p>如果你决定要<a href="https://github.com/erlang/otp/blob/maint/HOWTO/INSTALL.md#required-utilities">自行编译 Erlang 源代码</a>，那么请按以下步骤操作。</p>
+<ol>
+<li>
+<p>安装构建依赖：</p>
+<pre><code class="language-bash">$ sudo yum install -y which wget perl openssl-devel make automake autoconf ncurses-devel gcc
+
+</code></pre>
+</li>
+<li>
+<p>从 <a href="http://www.erlang.org/downloads">Erlang 官网</a>下载源代码</p>
+<pre><code class="language-bash">$ curl -O http://erlang.org/download/otp_src_20.2.tar.gz
+
+</code></pre>
+</li>
+<li>
+<p>解压 tar.gz 包</p>
+<pre><code class="language-bash">$ tar zxvf otp_src_20.2.tar.gz
+
+</code></pre>
+</li>
+<li>
+<p>安装</p>
+<pre><code class="language-bash">$ cd otp_src_20.2
+$ ./otp_build autoconf
+$ ./configure &amp;&amp; make &amp;&amp; sudo make install
+
+</code></pre>
+</li>
+<li>
+<p>验证</p>
+<pre><code class="language-bash">$ erl
+
+</code></pre>
+</li>
+</ol>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/install-redmine-on-centos7/" class="post-title gt-a-link">
+                    Install Redmine on CentOS7
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

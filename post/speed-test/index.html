@@ -1,0 +1,598 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>测速 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    测速
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/C-6ym8R1Hf/" class="post-tags">
+                            # VPS
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/K00tOzYo_F/" class="post-tags">
+                            # shell
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <pre><code class="language-python">#!/usr/bin/env bash
+#
+# Description: Test your server's network with Speedtest to China
+#
+# Copyright (C) 2017 - 2017 Oldking &lt;oooldking@gmail.com&gt;
+#
+# URL: https://www.oldking.net/305.html
+#
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+SKYBLUE='\033[0;36m'
+PLAIN='\033[0m'
+
+# check root
+[[ $EUID -ne 0 ]] &amp;&amp; echo -e &quot;${RED}Error:${PLAIN} This script must be run as root!&quot; &amp;&amp; exit 1
+
+# check python
+if  [ ! -e '/usr/bin/python' ]; then
+        echo -e
+        read -p &quot;${RED}Error:${PLAIN} python is not install. You must be install python command at first.\nDo you want to install? [y/n]&quot; is_install
+        if [[ ${is_install} == &quot;y&quot; || ${is_install} == &quot;Y&quot; ]]; then
+            if [ &quot;${release}&quot; == &quot;centos&quot; ]; then
+                        yum -y install python
+                else
+                        apt-get -y install python
+                fi
+        else
+            exit
+        fi
+        
+fi
+
+# check wget
+if  [ ! -e '/usr/bin/wget' ]; then
+        echo -e
+        read -p &quot;${RED}Error:${PLAIN} wget is not install. You must be install wget command at first.\nDo you want to install? [y/n]&quot; is_install
+        if [[ ${is_install} == &quot;y&quot; || ${is_install} == &quot;Y&quot; ]]; then
+                if [ &quot;${release}&quot; == &quot;centos&quot; ]; then
+                        yum -y install wget
+                else
+                        apt-get -y install wget
+                fi
+        else
+                exit
+        fi
+fi
+
+
+clear
+echo &quot;#############################################################&quot;
+echo &quot;# Description: Test your server's network with Speedtest    #&quot;
+echo &quot;# Intro:  https://www.oldking.net/305.html                  #&quot;
+echo &quot;# Author: Oldking &lt;oooldking@gmail.com&gt;                     #&quot;
+echo &quot;# Github: https://github.com/oooldking                      #&quot;
+echo &quot;#############################################################&quot;
+echo
+echo &quot;测试服务器到&quot;
+echo -ne &quot;1.中国电信 2.中国联通 3.中国移动 4.本地默认 5.全面测速&quot;
+
+while :; do echo
+        read -p &quot;请输入数字选择： &quot; telecom
+        if [[ ! $telecom =~ ^[1-5]$ ]]; then
+                echo &quot;输入错误! 请输入正确的数字!&quot;
+        else
+                break   
+        fi
+done
+
+if [[ ${telecom} == 1 ]]; then
+        telecomName=&quot;电信&quot;
+        echo -e &quot;\n选择最靠近你的方位&quot;
+    echo -ne &quot;1.北方 2.南方&quot;
+    while :; do echo
+            read -p &quot;请输入数字选择： &quot; pos
+            if [[ ! $pos =~ ^[1-2]$ ]]; then
+                    echo &quot;输入错误! 请输入正确的数字!&quot;
+            else
+                    break
+            fi
+    done
+    echo -e &quot;\n选择最靠近你的城市&quot;
+    if [[ ${pos} == 1 ]]; then
+        echo -ne &quot;1.郑州 2.襄阳&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^[1-2]$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=4595
+                cityName=&quot;郑州&quot;
+        fi
+        if [[ ${city} == 2 ]]; then
+                num=12637
+                cityName=&quot;襄阳&quot;
+        fi
+    fi
+    if [[ ${pos} == 2 ]]; then
+        echo -ne &quot;1.上海 2.杭州 3.南宁 4.南昌 5.长沙 6.深圳 7.重庆 8.成都&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^[1-8]$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=3633
+                cityName=&quot;上海&quot;
+        fi
+        if [[ ${city} == 2 ]]; then
+                num=7509
+                cityName=&quot;杭州&quot;
+        fi
+        if [[ ${city} == 3 ]]; then
+                num=10305
+                cityName=&quot;南宁&quot;
+        fi
+        if [[ ${city} == 4 ]]; then
+                num=7230
+                cityName=&quot;南昌&quot;
+        fi
+        if [[ ${city} == 5 ]]; then
+                num=6132
+                cityName=&quot;长沙&quot;
+        fi
+        if [[ ${city} == 6 ]]; then
+                num=5081
+                cityName=&quot;深圳&quot;
+        fi
+        if [[ ${city} == 7 ]]; then
+                num=6592
+                cityName=&quot;重庆&quot;
+        fi
+        if [[ ${city} == 8 ]]; then
+                num=4624
+                cityName=&quot;成都&quot;
+        fi
+    fi
+fi
+
+if [[ ${telecom} == 2 ]]; then
+        telecomName=&quot;联通&quot;
+    echo -ne &quot;\n1.北方 2.南方&quot;
+    while :; do echo
+            read -p &quot;请输入数字选择： &quot; pos
+            if [[ ! $pos =~ ^[1-2]$ ]]; then
+                    echo &quot;输入错误! 请输入正确的数字!&quot;
+            else
+                    break
+            fi
+    done
+    echo -e &quot;\n选择最靠近你的城市&quot;
+    if [[ ${pos} == 1 ]]; then
+        echo -ne &quot;1.沈阳 2.长春 3.哈尔滨 4.天津 5.济南 6.北京 7.郑州 8.西安 9.太原 10.宁夏 11.兰州 12.西宁&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^(([1-9])|(1([0-2]{1})))$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=5017
+                cityName=&quot;沈阳&quot;
+        fi
+        if [[ ${city} == 2 ]]; then
+                num=9484
+                cityName=&quot;长春&quot;
+        fi
+        if [[ ${city} == 3 ]]; then
+                num=5460
+                cityName=&quot;哈尔滨&quot;
+        fi
+        if [[ ${city} == 4 ]]; then
+                num=5475
+                cityName=&quot;天津&quot;
+        fi
+        if [[ ${city} == 5 ]]; then
+                num=5039
+                cityName=&quot;济南&quot;
+        fi
+        if [[ ${city} == 6 ]]; then
+                num=5145
+                cityName=&quot;北京&quot;
+        fi
+        if [[ ${city} == 7 ]]; then
+                num=5131
+                cityName=&quot;郑州&quot;
+        fi
+        if [[ ${city} == 8 ]]; then
+                num= 4863
+                cityName=&quot;西安&quot;
+        fi
+        if [[ ${city} == 9 ]]; then
+                num=12868
+                cityName=&quot;太原&quot;
+        fi
+        if [[ ${city} == 10 ]]; then
+                num=5509
+                cityName=&quot;宁夏&quot;
+        fi
+        if [[ ${city} == 11 ]]; then
+                num=4690
+                cityName=&quot;兰州&quot;
+        fi
+        if [[ ${city} == 12 ]]; then
+                num=5992
+                cityName=&quot;西宁&quot;
+        fi
+    fi
+    if [[ ${pos} == 2 ]]; then
+        echo -ne &quot;1.上海 2.杭州 3.南宁 4.合肥 5.南昌 6.长沙 7.深圳 8.广州 9.重庆 10.昆明 11.成都&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^(([1-9])|(1([0-1]{1})))$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=5083
+                cityName=&quot;上海&quot;
+        fi
+        if [[ ${city} == 2 ]]; then
+                num=5300
+                cityName=&quot;杭州&quot;
+        fi
+        if [[ ${city} == 3 ]]; then
+                num=5674
+                cityName=&quot;南宁&quot;
+        fi
+        if [[ ${city} == 4 ]]; then
+                num=5724
+                cityName=&quot;合肥&quot;
+        fi
+        if [[ ${city} == 5 ]]; then
+                num=5079
+                cityName=&quot;南昌&quot;
+        fi
+        if [[ ${city} == 6 ]]; then
+                num=4870
+                cityName=&quot;长沙&quot;
+        fi
+        if [[ ${city} == 7 ]]; then
+                num=10201
+                cityName=&quot;深圳&quot;
+        fi
+        if [[ ${city} == 8 ]]; then
+                num=3891
+                cityName=&quot;广州&quot;
+        fi
+        if [[ ${city} == 9 ]]; then
+                num=5726
+                cityName=&quot;重庆&quot;
+        fi
+        if [[ ${city} == 10 ]]; then
+                num=5103
+                cityName=&quot;昆明&quot;
+        fi
+        if [[ ${city} == 11 ]]; then
+                num=2461
+                cityName=&quot;成都&quot;
+        fi
+    fi
+fi
+
+if [[ ${telecom} == 3 ]]; then
+        telecomName=&quot;移动&quot;
+    echo -ne &quot;\n1.北方 2.南方&quot;
+    while :; do echo
+            read -p &quot;请输入数字选择： &quot; pos
+            if [[ ! $pos =~ ^[1-2]$ ]]; then
+                    echo &quot;输入错误! 请输入正确的数字!&quot;
+            else
+                    break
+            fi
+    done
+    echo -e &quot;\n选择最靠近你的城市&quot;
+    if [[ ${pos} == 1 ]]; then
+        echo -ne &quot;1.西安&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^[1]$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=5292
+        fi
+    fi
+    if [[ ${pos} == 2 ]]; then
+        echo -ne &quot;1.上海 2.宁波 3.无锡 4.杭州 5.合肥 6.成都&quot;
+        while :; do echo
+                read -p &quot;请输入数字选择： &quot; city
+                if [[ ! $city =~ ^[1-6]$ ]]; then
+                        echo &quot;输入错误! 请输入正确的数字!&quot;
+                else
+                        break
+            fi
+        done
+        if [[ ${city} == 1 ]]; then
+                num=4665
+                cityName=&quot;上海&quot;
+        fi
+        if [[ ${city} == 2 ]]; then
+                num=6715
+                cityName=&quot;宁波&quot;
+        fi
+        if [[ ${city} == 3 ]]; then
+                num=5122
+                cityName=&quot;无锡&quot;
+        fi
+        if [[ ${city} == 4 ]]; then
+                num=4647
+                cityName=&quot;杭州&quot;
+        fi
+        if [[ ${city} == 5 ]]; then
+                num=4377 
+                cityName=&quot;合肥&quot;
+        fi
+        if [[ ${city} == 6 ]]; then
+                num=4575
+                cityName=&quot;成都&quot;
+        fi
+    fi
+fi
+
+# install speedtest
+if  [ ! -e '/tmp/speedtest.py' ]; then
+    wget --no-check-certificate -P /tmp https://raw.github.com/sivel/speedtest-cli/master/speedtest.py &gt; /dev/null 2&gt;&amp;1
+fi
+chmod a+rx /tmp/speedtest.py
+
+result() {
+    download=`cat /tmp/speed.log | awk -F ':' '/Download/{print $2}'`
+    upload=`cat /tmp/speed.log | awk -F ':' '/Upload/{print $2}'`
+    hostby=`cat /tmp/speed.log | awk -F ':' '/Hosted/{print $1}'`
+    latency=`cat /tmp/speed.log | awk -F ':' '/Hosted/{print $2}'`
+    clear
+    echo &quot;$hostby&quot;
+    echo &quot;延迟  : $latency&quot;
+    echo &quot;上传  : $upload&quot;
+    echo &quot;下载  : $download&quot;
+    echo -ne &quot;\n当前时间: &quot;
+    echo $(date +%Y-%m-%d&quot; &quot;%H:%M:%S)
+}
+
+speed_test(){
+    temp=$(python /tmp/speedtest.py --server $1 --share 2&gt;&amp;1)
+    is_down=$(echo &quot;$temp&quot; | grep 'Download') 
+    if [[ ${is_down} ]]; then
+        local REDownload=$(echo &quot;$temp&quot; | awk -F ':' '/Download/{print $2}')
+        local reupload=$(echo &quot;$temp&quot; | awk -F ':' '/Upload/{print $2}')
+        local relatency=$(echo &quot;$temp&quot; | awk -F ':' '/Hosted/{print $2}')
+        temp=$(echo &quot;$relatency&quot; | awk -F '.' '{print $1}')
+        if [[ ${temp} -gt 1000 ]]; then
+            relatency=&quot; 000.000 ms&quot;
+        fi
+        local nodeName=$2
+
+        printf &quot;${YELLOW}%-17s${GREEN}%-18s${RED}%-20s${SKYBLUE}%-12s${PLAIN}\n&quot; &quot;${nodeName}&quot; &quot;${reupload}&quot; &quot;${REDownload}&quot; &quot;${relatency}&quot;
+    else
+        local cerror=&quot;ERROR&quot;
+    fi
+}
+
+if [[ ${telecom} =~ ^[1-3]$ ]]; then
+    python /tmp/speedtest.py --server ${num} --share 2&gt;/dev/null | tee /tmp/speed.log 2&gt;/dev/null
+    is_down=$(cat /tmp/speed.log | grep 'Download')
+
+    if [[ ${is_down} ]]; then
+        result
+        echo &quot;测试到 ${cityName}${telecomName} 完成！&quot;
+        rm -rf /tmp/speedtest.py
+        rm -rf /tmp/speed.log
+    else
+        echo -e &quot;\n${RED}ERROR:${PLAIN} 当前节点不可用，请更换其他节点，或换个时间段再测试。&quot;
+    fi
+fi
+
+if [[ ${telecom} == 4 ]]; then
+    python /tmp/speedtest.py | tee /tmp/speed.log
+    result
+    echo &quot;本地测试完成！&quot;
+    rm -rf /tmp/speedtest.py
+    rm -rf /tmp/speed.log
+fi
+
+if [[ ${telecom} == 5 ]]; then
+    echo &quot;&quot;
+    printf &quot;%-14s%-18s%-20s%-12s\n&quot; &quot;Node Name&quot; &quot;Upload Speed&quot; &quot;Download Speed&quot; &quot;Latency&quot;
+    start=$(date +%s) 
+    speed_test '6435' '襄阳电信'
+    speed_test '7509' '昆明电信'
+    speed_test '3633' '上海电信'
+    speed_test '4624' '成都电信'
+    speed_test '5017' '沈阳联通'
+    speed_test '4863' '西安联通'
+    speed_test '5083' '上海联通'
+    speed_test '5726' '重庆联通'
+    speed_test '5292' '西安移动'
+    speed_test '16314' '山东移动'
+    speed_test '6715' '宁波移动'
+    speed_test '4575' '成都移动'
+    end=$(date +%s)  
+    rm -rf /tmp/speedtest.py
+    echo &quot;&quot;
+    time=$(( $end - $start ))
+    if [[ $time -gt 60 ]]; then
+        min=$(expr $time / 60)
+        sec=$(expr $time % 60)
+        echo -ne &quot;花费时间：${min} 分 ${sec} 秒&quot;
+    else
+        echo -ne &quot;花费时间：${time} 秒&quot;
+    fi
+    echo -ne &quot;\n当前时间: &quot;
+    echo $(date +%Y-%m-%d&quot; &quot;%H:%M:%S)
+    echo &quot;全面测试完成！&quot;
+fi
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/cloudconeagent/" class="post-title gt-a-link">
+                    CloudconeAgent
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

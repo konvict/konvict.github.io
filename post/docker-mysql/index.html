@@ -1,0 +1,294 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>docker中建立mysql的主从 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    docker中建立mysql的主从
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-24 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/KB9mqC3ok/" class="post-tags">
+                            # Docker
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/oBBSwCgc-k/" class="post-tags">
+                            # Mysql
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="关于主从同步的背景">关于主从同步的背景:</h2>
+<p>最近在工作上遇到一个任务：将主服务器上的mysql数据库和从服务器的mysql数据库实现主从同步。即当主库发生数据的变更时，从库也能做出同样的变更。<br>
+1.环境：Linux, docker;<br>
+2.mysql运行在docker容器中;</p>
+<h2 id="找到mysql的配置文件">找到mysql的配置文件</h2>
+<p>MySQL默认读取的配置文件是“my.cnf”，这个文件的位置可以通过以下命令查找：</p>
+<pre><code class="language-bash">$ mysql --help|grep 'my.cnf' 
+</code></pre>
+<p>该查找命令会返回以下路径，排序靠前的路径会被优先读取，若文件不存在则往下读：</p>
+<pre><code class="language-bash">order of preference, my.cnf, $MYSQL_TCP_PORT,
+/etc/my.cnf /etc/mysql/my.cnf ~/.my.cnf 
+</code></pre>
+<p>我的my.cnf文件在路径/etc/mysql下，文件内容是这样的：</p>
+<pre><code class="language-bash"># Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#******
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mysql.conf.d/ 
+</code></pre>
+<p>“!includedir /etc/mysql/conf.d/” 表示my.cnf配置文件中引入了/etc/mysql/conf.d/目录下所有的文件内容，因此在该目录下的文件中添加配置内容也能达到配置的作用。</p>
+<p>由于修改配置文件极有可能将容器挂掉，无法进入容器从而无法把配置文件复原，因此，在最初创建这个容器的时候，出于安全考虑，我将宿主机的/home/mysql/conf/目录挂载到了容器的/etc/mysql/conf.d/目录中。这样，即使无法进入容器也可以在宿主机的挂载目录中找到对应的配置文件进行复原。</p>
+<h2 id="解决过程">解决过程</h2>
+<h5 id="a主库和从库master-slave">a.主库和从库(master &amp; slave)</h5>
+<p>我的主库和从库所在服务器分别在不同的服务器的docker中，mysql在容器的3306端口，对应着宿主机的3306端口<br>
+1.主库：10.30.129.204<br>
+2.从库：10.30.129.191</p>
+<h5 id="b主库的配置">b.主库的配置</h5>
+<p>在主库的配置文件中添加以下内容：</p>
+<pre><code class="language-bash">[mysqld]
+server_id=100 #服务器标志号，与从库的server_id标识不得和主库一致
+log-bin=mysql-bin  #设置日志文件，从库的I/O线程通过读这个文件的日志实现同步
+binlog_cache_size=1M #日志的缓存大小
+binlog_format=mixed #设置bin-log日志文件格式为：mixed，防止主键重复
+slave_skip_errors=1062 #忽略所有的1062错误
+expire_logs_days=7 #设置bin-log日志文件保存的天数 
+</code></pre>
+<p>配置完成后回到宿主机上，重启mysql:</p>
+<pre><code class="language-undefined">&gt;docker restart mysql 
+</code></pre>
+<p>重启后进入容器，在mysql shell环境下查看主库的状态：</p>
+<pre><code class="language-ruby">mysql&gt; show master status;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      154 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec) 
+</code></pre>
+<p>在这里记录下日志文件mysql-bin.000001和日志记录到的Position，在从库连接时需要用到。</p>
+<p>除此之外，还需要在主服务器上添加一个用于从机访问的帐号, 赋予REPLICATION SLAVE权限：</p>
+<pre><code class="language-bash">GRANT REPLICATION SLAVE ON *.* TO '&lt;SLAVE_NAME&gt;'@'&lt;SLAVE_ADDRESS&gt;' IDENTIFIED BY '&lt;PASSWORD&gt;'; 
+</code></pre>
+<p>稍后，&lt;SLAVE_NAME&gt;和&lt;PASSWORD&gt;将会在从库的配置中使用。</p>
+<h5 id="c从库的配置">c.从库的配置</h5>
+<p>和主库的配置过程一样，先将宿主机的相关目录挂载到配置文件所在的目录上，以防不测。现在我们来修改从库的配置文件，在配置文件中添加以下内容：</p>
+<pre><code class="language-csharp">[mysqld]
+server_id=101 #必须和主服务器不一致
+slave_skip_errors=1062
+relay_log=mysql-relay-bin #设置中继日志
+log_slave_updates=1
+log_error=mysql_log_error #设置错误日志，当主从同步的过程中出现错误可以翻日志
+master-host=10.30.129.204
+master-user=&lt;SLAVE_NAME&gt;
+master-password=&lt;PASSWORD&gt;
+master-port=3306 
+</code></pre>
+<p>配置完成后，在从服务器上重启一下mysql：</p>
+<pre><code class="language-undefined">docker restart mysql 
+</code></pre>
+<p>然后进入mysql shell中输入以下命令：</p>
+<pre><code class="language-bash">mysql&gt; change master to
+master_host='10.30.129.204', #主服务器地址
+master_user='&lt;SLAVE_NAME&gt;',
+master_password='&lt;PASSWORD&gt;',
+master_port=3306,
+master_log_file='mysql-bin.000001', #先前记录的主库日志文件名
+master_log_pos=154; #日志给从库I/O线程读取的起始位置 
+</code></pre>
+<p>开启同步：</p>
+<pre><code class="language-undefined">mysql&gt; start slave; 
+</code></pre>
+<p>最后，查看从库同步的状态：</p>
+<pre><code class="language-css">mysql&gt; show slave status \G;
+*************************** 1. row ***************************
+               Slave_IO_State: Waiting for master to send event
+                  Master_Host: 10.30.129.204
+                  Master_User: slave
+                  Master_Port: 3306
+                Connect_Retry: 30
+              Master_Log_File: mysql-bin.000001
+          Read_Master_Log_Pos: 50325805
+               Relay_Log_File: mysql-relay-bin.000007
+                Relay_Log_Pos: 50325971
+        Relay_Master_Log_File: mysql-bin.000001
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+              Replicate_Do_DB: 
+          Replicate_Ignore_DB: 
+           Replicate_Do_Table: 
+       Replicate_Ignore_Table: 
+      Replicate_Wild_Do_Table: 
+  Replicate_Wild_Ignore_Table: 
+                   Last_Errno: 0
+                   Last_Error: 
+                 Skip_Counter: 0
+          Exec_Master_Log_Pos: 50325805 
+</code></pre>
+<p>我们只需要关注以下几个指标：<br>
+Slave_IO_Running: Yes<br>
+Slave_SQL_Running: Yes<br>
+Master_Log_File: mysql-bin.000001<br>
+Relay_Master_Log_File: mysql-bin.000001<br>
+Read_Master_Log_Pos: 50325805<br>
+Exec_master_log_pos: 50325805</p>
+<p>日志文件和记录位置必须是两两一致的，IO线程和SQL线程都要是Yes状态。若同步失败，可以在错误日志下排查一下。到这里的时候，mysql的主从同步就大功告成了。</p>
+<h2 id="注意事项">注意事项</h2>
+<h5 id="1主库中原先就有数据">1.主库中原先就有数据</h5>
+<p>如果主库中原来就存在数据，并且需要将先前的数据同步到从库中，可以全量备份数据库到从库。通过以下命令导出和导入：</p>
+<pre><code class="language-bash">#全量导出
+mysqldump -h &lt;host&gt;  -u &lt;username&gt; -p &lt;password&gt; --all-databases &gt;all-databases.sql
+
+#全量导入(在从库的mysql shell环境下)
+mysql&gt; source 
+</code></pre>
+<h5 id="2主库一直有新数据的更新">2.主库一直有新数据的更新</h5>
+<p>在从主库备份全库数据，到查看主库mysql-bin-log日志文件的记录位置position的这段时间里，如果数据库被别的用户写入数据，会导致主从不一致的情况。安全起见，可以在备份前锁库，待记录完日志文件状态后再解锁：</p>
+<pre><code class="language-bash">#加锁
+mysql&gt; FLUSH TABLES WITH READ LOCK;
+#解锁
+mysql&gt; UNLOCK TABLES; 
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/golang-cross-compiling/" class="post-title gt-a-link">
+                    Golang 交叉编译
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

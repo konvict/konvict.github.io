@@ -1,0 +1,200 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>ownCloud Rest Password using OCC | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    ownCloud Rest Password using OCC
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-24 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/bGUUOUIyc4/" class="post-tags">
+                            # LNMP
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/bIUFtOlj1T/" class="post-tags">
+                            # Software
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>ownCloud/Nextcloud使用OCC命令重置密码</p>
+<h1 id="owncloudnextcloud使用occ命令重置密码">ownCloud/Nextcloud使用OCC命令重置密码</h1>
+<p>有时因为种种原因忘记了自己ownCloud/Nextcloud的密码。</p>
+<p>一般来说，可以使用管理员账户来修改密码</p>
+<p>如果出现了忘记了管理员密码这种糟糕的情况，就只能通过OCC命令或修改数据库的方式来解决了。本文介绍较为方便的使用OCC命令重置密码方式。</p>
+<h2 id="occ命令的用法">OCC命令的用法</h2>
+<p>occ命令是ownCloud/Nextcloud的命令行界面。您可以使用occ执行许多常见的服务器操作，例如安装和升级ownCloud/Nextcloud，管理用户，加密，密码，LDAP设置等。</p>
+<p>一般格式是这样的：</p>
+<pre><code>sudo -u www-data php occ  [options] [arguments]
+</code></pre>
+<p>更多使用方法可以阅读⇒<a href="https://www.orgleaf.com/1719.html">ownCloud/Nextcloud OCC命令行工具详解（1）</a></p>
+<h2 id="重置密码">重置密码</h2>
+<p>user相关命令：</p>
+<pre><code> user
+  user:add                            添加一个用户
+  user:delete                         删除特定用户
+  user:disable                        禁用特定用户
+  user:enable                         激活特定用户
+  user:info                           显示用户信息
+  user:lastseen                       显示用户最后登陆了时间
+  user:list                           列出所有用户
+  user:report                         显示有多少用户访问
+  user:resetpassword                  为一个用户重置密码
+  user:setting                        读取和修改用户设置
+</code></pre>
+<p>我们需要用的是user:reserpassword。</p>
+<p>命令格式为为下</p>
+<pre><code>sudo -u www-data php occ user:resetpassword 用户名
+</code></pre>
+<h3 id="实例">实例</h3>
+<p>要重置密码之前，我们要先知道要给哪个用户重置密码。</p>
+<pre><code>sudo -u www-data php occ user:list
+</code></pre>
+<p>重置用户ChengYe的密码</p>
+<pre><code>sudo -u www-data php occ user:resetpassword ChengYe
+</code></pre>
+<p>然后会提示输入新密码（输入的密码不会显示）按回车确认密码。<br>
+如果输入的密码比较简单，你会得到以下提示，那么你需要换一个更复杂的密码。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/aria2-and-yaaw/" class="post-title gt-a-link">
+                    Aria2 &amp; YAAW 使用说明
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

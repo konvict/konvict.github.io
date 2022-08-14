@@ -1,0 +1,294 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>SSHD config file  | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    SSHD config file 
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="ssh-服务配置文件介绍">SSH 服务配置文件介绍</h1>
+<ul>
+<li>
+<p>位置</p>
+<p>/etc/ssh/sshd_config</p>
+<h1 id="主要参数">主要参数</h1>
+</li>
+<li>
+<p>Port 22</p>
+<p>监听端口</p>
+</li>
+<li>
+<p>Protocal 2</p>
+<p>协议版本</p>
+</li>
+<li>
+<p>ListenAddress 0.0.0.0</p>
+<p>设置SSHD服务器绑定的IP地址</p>
+</li>
+<li>
+<p>HostKey /etc/ssh/ssh_host_dsa_key</p>
+<p>设置服务器秘钥文件的路径</p>
+</li>
+<li>
+<p>KeyRegenerationInterval 1h</p>
+<p>设置多少秒之后系统自动生成服务器的秘钥</p>
+</li>
+<li>
+<p>ServerKeyBits 1024</p>
+<p>定义服务器秘钥长度</p>
+</li>
+<li>
+<p>SyslogFacility AUTHPRIV</p>
+<p>设定记录来自sshd消息的时候，是否给出”facility code&quot;</p>
+</li>
+<li>
+<p>LogLevel INFO</p>
+<p>定义日志级别</p>
+</li>
+<li>
+<p>LoginGraceTime 2m</p>
+<p>定义用户登录失败，在切断连接前服务器要等待的时间。</p>
+</li>
+<li>
+<p>PermitRootLogin no</p>
+<p>是否允许 root用户登录ssh</p>
+</li>
+<li>
+<p>StrictModes yes</p>
+<p>设置SSH在接受登录请求之前是否检查用户根目录rhosts文件的权限和所有权。</p>
+</li>
+<li>
+<p>RSAAuthentication no</p>
+<p>是否开启RSA秘钥验证</p>
+</li>
+<li>
+<p>PubkeyAuthentication yes</p>
+<p>是否开启秘钥认证登录</p>
+</li>
+<li>
+<p>AuthorizedKeysFile .ssh/authorized_keys</p>
+<p>设置秘钥验证文件的路径。搭配PubkeyAuthentication 使用。</p>
+</li>
+<li>
+<p>IgnoreUserKnownHosts no</p>
+<p>用来设置SS在进行RhostsRSAAuthentication 验证时，是否忽略用户 $HOME/.ssh/known_hosts文件</p>
+</li>
+<li>
+<p>IgnoreRhost yes</p>
+<p>验证时是否使用 ~/.rhosts 以及 ~/.shosts文件</p>
+</li>
+<li>
+<p>PasswordAuthentication yes</p>
+<p>是否启用密码验证</p>
+</li>
+<li>
+<p>PermitEmptyPasswords no</p>
+<p>是否允许空密码</p>
+</li>
+<li>
+<p>ChallengeResponseAuthentication no</p>
+<p>禁用s/key密码</p>
+</li>
+<li>
+<p>UsePAM no</p>
+<p>不通过PAM验证</p>
+</li>
+<li>
+<p>X11Forwarding yes</p>
+<p>是否允许X11转发</p>
+</li>
+<li>
+<p>PrintMotd yes</p>
+<p>登录时是否显示 /etc/motd 内信息</p>
+</li>
+<li>
+<p>PrintLastLog no</p>
+<p>是否显示上次登录信息</p>
+</li>
+<li>
+<p>Compresstion yes</p>
+<p>是否压缩命令</p>
+</li>
+<li>
+<p>TCPKeepAlive yes</p>
+<p>防止死链接</p>
+</li>
+<li>
+<p>UseDNS no</p>
+<p>是否使用DNS反向解析</p>
+</li>
+<li>
+<p>MaxStartups 5</p>
+<p>同时允许几个尚未登入的练级。</p>
+</li>
+<li>
+<p>MaxAuthTries 3</p>
+<p>最大失败尝试登录次数</p>
+</li>
+<li>
+<p>AllUsers &lt;用户名 用户名&gt;</p>
+<p>允许通过SSH登录的用户</p>
+</li>
+<li>
+<p>AllGroups &lt;组名 组名&gt;</p>
+<p>允许通过SSH登录的用户组</p>
+</li>
+<li>
+<p>DenyUsers &lt;用户名 用户名&gt;</p>
+<p>不允许通过SSH登录的用户</p>
+</li>
+<li>
+<p>DenyGroups &lt;组名 组名&gt;</p>
+<p>不允许通过SSH登录的用户组</p>
+</li>
+</ul>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/firewalld/" class="post-title gt-a-link">
+                    Firewalld
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

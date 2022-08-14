@@ -1,0 +1,298 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>HTML2CSV | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1660499010511">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1660499010511" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    HTML2CSV
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2021-11-23 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/Ya0jSvDix4/" class="post-tags">
+                            # Python
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <pre><code class="language-python">#!/usr/bin/python
+# -*- coding: iso-8859-1 -*-
+# Hello, this program is written in Python - http://python.org
+programname = 'html2csv - version 2002-09-20 - http://sebsauvage.net'
+
+import sys, getopt, os.path, glob, HTMLParser, re
+
+try:    import psyco ; psyco.jit()  # If present, use psyco to accelerate the program
+except: pass
+
+def usage(progname):
+    ''' Display program usage. '''
+    progname = os.path.split(progname)[1]
+    if os.path.splitext(progname)[1] in ['.py','.pyc']: progname = 'python '+progname
+    return '''%s
+A coarse HTML tables to CSV (Comma-Separated Values) converter.
+
+Syntax    : %s source.html
+
+Arguments : source.html is the HTML file you want to convert to CSV.
+            By default, the file will be converted to csv with the same
+            name and the csv extension (source.html -&gt; source.csv)
+            You can use * and ?.
+
+Examples   : %s mypage.html
+           : %s *.html
+
+This program is public domain.
+Author : Sebastien SAUVAGE &lt;sebsauvage at sebsauvage dot net&gt;
+         http://sebsauvage.net
+''' % (programname, progname, progname, progname)
+
+class html2csv(HTMLParser.HTMLParser):
+    ''' A basic parser which converts HTML tables into CSV.
+        Feed HTML with feed(). Get CSV with getCSV(). (See example below.)
+        All tables in HTML will be converted to CSV (in the order they occur
+        in the HTML file).
+        You can process very large HTML files by feeding this class with chunks
+        of html while getting chunks of CSV by calling getCSV().
+        Should handle badly formated html (missing &lt;tr&gt;, &lt;/tr&gt;, &lt;/td&gt;,
+        extraneous &lt;/td&gt;, &lt;/tr&gt;...).
+        This parser uses HTMLParser from the HTMLParser module,
+        not HTMLParser from the htmllib module.
+        Example: parser = html2csv()
+                 parser.feed( open('mypage.html','rb').read() )
+                 open('mytables.csv','w+b').write( parser.getCSV() )
+        This class is public domain.
+        Author: SÈbastien SAUVAGE &lt;sebsauvage at sebsauvage dot net&gt;
+                http://sebsauvage.net
+        Versions:
+           2002-09-19 : - First version
+           2002-09-20 : - now uses HTMLParser.HTMLParser instead of htmllib.HTMLParser.
+                        - now parses command-line.
+        To do:
+            - handle &lt;PRE&gt; tags
+            - convert html entities (&amp;name; and &amp;#ref;) to Ascii.
+            '''
+    def __init__(self):
+        HTMLParser.HTMLParser.__init__(self)
+        self.CSV = ''      # The CSV data
+        self.CSVrow = ''   # The current CSV row beeing constructed from HTML
+        self.inTD = 0      # Used to track if we are inside or outside a &lt;TD&gt;...&lt;/TD&gt; tag.
+        self.inTR = 0      # Used to track if we are inside or outside a &lt;TR&gt;...&lt;/TR&gt; tag.
+        self.re_multiplespaces = re.compile('\s+')  # regular expression used to remove spaces in excess
+        self.rowCount = 0  # CSV output line counter.
+    def handle_starttag(self, tag, attrs):
+        if   tag == 'tr': self.start_tr()
+        elif tag == 'td': self.start_td()
+    def handle_endtag(self, tag):
+        if   tag == 'tr': self.end_tr()
+        elif tag == 'td': self.end_td()         
+    def start_tr(self):
+        if self.inTR: self.end_tr()  # &lt;TR&gt; implies &lt;/TR&gt;
+        self.inTR = 1
+    def end_tr(self):
+        if self.inTD: self.end_td()  # &lt;/TR&gt; implies &lt;/TD&gt;
+        self.inTR = 0            
+        if len(self.CSVrow) &gt; 0:
+            self.CSV += self.CSVrow[:-1]
+            self.CSVrow = ''
+        self.CSV += '\n'
+        self.rowCount += 1
+    def start_td(self):
+        if not self.inTR: self.start_tr() # &lt;TD&gt; implies &lt;TR&gt;
+        self.CSVrow += '&quot;'
+        self.inTD = 1
+    def end_td(self):
+        if self.inTD:
+            self.CSVrow += '&quot;,'  
+            self.inTD = 0
+    def handle_data(self, data):
+        if self.inTD:
+            self.CSVrow += self.re_multiplespaces.sub(' ',data.replace('\t',' ').replace('\n','').replace('\r','').replace('&quot;','&quot;&quot;'))
+    def getCSV(self,purge=False):
+        ''' Get output CSV.
+            If purge is true, getCSV() will return all remaining data,
+            even if &lt;td&gt; or &lt;tr&gt; are not properly closed.
+            (You would typically call getCSV with purge=True when you do not have
+            any more HTML to feed and you suspect dirty HTML (unclosed tags). '''
+        if purge and self.inTR: self.end_tr()  # This will also end_td and append last CSV row to output CSV.
+        dataout = self.CSV[:]
+        self.CSV = ''
+        return dataout
+
+
+if __name__ == &quot;__main__&quot;:
+    try: # Put getopt in place for future usage.
+        opts, args = getopt.getopt(sys.argv[1:],None)
+    except getopt.GetoptError:
+        print usage(sys.argv[0])  # print help information and exit:
+        sys.exit(2)
+    if len(args) == 0:
+        print usage(sys.argv[0])  # print help information and exit:
+        sys.exit(2)       
+    print programname
+    html_files = glob.glob(args[0])
+    for htmlfilename in html_files:
+        outputfilename = os.path.splitext(htmlfilename)[0]+'.csv'
+        parser = html2csv()
+        print 'Reading %s, writing %s...' % (htmlfilename, outputfilename)
+        try:
+            htmlfile = open(htmlfilename, 'rb')
+            csvfile = open( outputfilename, 'w+b')
+            data = htmlfile.read(8192)
+            while data:
+                parser.feed( data )
+                csvfile.write( parser.getCSV() )
+                sys.stdout.write('%d CSV rows written.\r' % parser.rowCount)
+                data = htmlfile.read(8192)
+            csvfile.write( parser.getCSV(True) )
+            csvfile.close()
+            htmlfile.close()
+        except:
+            print 'Error converting %s        ' % htmlfilename
+            try:    htmlfile.close()
+            except: pass
+            try:    csvfile.close()
+            except: pass
+    print 'All done. '
+    ```</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/linux-gen-password/" class="post-title gt-a-link">
+                    LINUX随机密码生成
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">空空如也……</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
