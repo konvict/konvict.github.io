@@ -1,0 +1,311 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Linux 安装Microsoft SQL Server | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1772949336325">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1772949336325" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Linux 安装Microsoft SQL Server
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2022-09-08 ·
+                    </time>
+                    
+                        <a href="https://konvict.github.io/tag/bIUFtOlj1T/" class="post-tags">
+                            # Software
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/3v708advD4/" class="post-tags">
+                            # Linux
+                        </a>
+                    
+                        <a href="https://konvict.github.io/tag/JAtX3rYLF0/" class="post-tags">
+                            # CentOS
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="基本环境">基本环境</h1>
+<ul>
+<li>CentOS Linux 7 (Core) 内存大于2GB</li>
+<li>Microsoft SQL Server 2019<br>
+其他系统版本可在 <strong>https://packages.microsoft.com/config/</strong>  找到。</li>
+</ul>
+<h1 id="设置软件源">设置软件源</h1>
+<pre><code class="language-bash">yum-config-manager \
+    --add-repo \
+    https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
+yum clean all &amp;&amp; yum makecache
+</code></pre>
+<h1 id="安装">安装</h1>
+<pre><code class="language-bash">yum install -y mssql-server
+</code></pre>
+<p>安装完成后以<strong>root身份</strong>运行</p>
+<pre><code class="language-bash">┌─(/etc/yum.repos.d)──────────────────────────────────(ROOT@vpn2:pts/0)─┐
+└─(01:45:38)──&gt; /opt/mssql/bin/mssql-conf setup           ──(Thu,Sep08)─┘
+Choose an edition of SQL Server:
+  1) Evaluation (free, no production use rights, 180-day limit)
+  2) Developer (free, no production use rights)
+  3) Express (free)
+  4) Web (PAID)
+  5) Standard (PAID)
+  6) Enterprise (PAID) - CPU Core utilization restricted to 20 physical/40 hyperthreaded
+  7) Enterprise Core (PAID) - CPU Core utilization up to Operating System Maximum
+  8) I bought a license through a retail sales channel and have a product key to enter.
+
+Details about editions can be found at
+https://go.microsoft.com/fwlink/?LinkId=2109348&amp;clcid=0x409
+
+Use of PAID editions of this software requires separate licensing through a
+Microsoft Volume Licensing program.
+By choosing a PAID edition, you are verifying that you have the appropriate
+number of licenses in place to install and run this software.
+
+Enter your edition(1-8): 2
+# 选择2或者3 均可，均为免费版本。
+The license terms for this product can be found in
+/usr/share/doc/mssql-server or downloaded from:
+https://go.microsoft.com/fwlink/?LinkId=2104294&amp;clcid=0x409
+
+The privacy statement can be viewed at:
+https://go.microsoft.com/fwlink/?LinkId=853010&amp;clcid=0x409
+# 此处设置 管理员账户密码(SA)
+Enter the SQL Server system administrator password: 
+Confirm the SQL Server system administrator password: 
+Configuring SQL Server...
+
+ForceFlush is enabled for this instance. 
+ForceFlush feature is enabled for log durability.
+Created symlink from /etc/systemd/system/multi-user.target.wants/mssql-server.service to /usr/lib/systemd/system/mssql-server.service.
+Setup has completed successfully. SQL Server is now starting.
+</code></pre>
+<p>至此初始化完成，可运行：</p>
+<pre><code class="language-bash">ps aux | grep mssql | grep -v grep 
+</code></pre>
+<p>或者</p>
+<pre><code class="language-bash">systemctl status mssql-server.service 
+</code></pre>
+<p>查看是否安装成功</p>
+<p>二进制文件在<code>/opt/mssql</code>，数据文件在 <code>/var/opt/mssql</code>。</p>
+<h1 id="安装mssql-toolscli">安装mssql-tools（CLI）</h1>
+<h2 id="设置软件源-2">设置软件源</h2>
+<pre><code class="language-bash">yum-config-manager \
+    --add-repo \
+    https://packages.microsoft.com/config/rhel/7/prod.repo
+yum clean all &amp;&amp; yum makecache
+</code></pre>
+<h2 id="安装-2">安装</h2>
+<pre><code class="language-bash">yum install mssql-tools -y
+# 注意 此处需要同意 微软 许可条款
+The license terms for this product can be downloaded from
+https://aka.ms/odbc17eula and found in
+/usr/share/doc/msodbcsql17/LICENSE.txt . By entering 'YES',
+you indicate that you accept the license terms.
+
+Do you accept the license terms? (Enter YES or NO)
+yes
+  Installing : msodbcsql17-17.10.1.1-1.x86_64                                                                                                                                                                                        2/3 
+odbcinst: Driver installed. Usage count increased to 1. 
+    Target directory is /etc
+The license terms for this product can be downloaded from
+http://go.microsoft.com/fwlink/?LinkId=746949 and found in
+/usr/share/doc/mssql-tools/LICENSE.txt . By entering 'YES',
+you indicate that you accept the license terms.
+
+Do you accept the license terms? (Enter YES or NO)
+yes
+# 略
+</code></pre>
+<h2 id="环境变量设置">环境变量设置</h2>
+<pre><code class="language-bash">echo &quot;export PATH=$PATH:/opt/mssql/bin:/opt/mssql-tools/bin&quot; &gt;&gt; /etc/profile
+. /etc/profile
+</code></pre>
+<h2 id="链接数据库">链接数据库</h2>
+<pre><code class="language-bash">┌─(~)───────────────────────────────────────(ROOT@vpn2:pts/0)─┐
+└─(02:09:34)──&gt; sqlcmd -S 127.0.0.1 -U SA      ───(Thu,Sep08)─┘
+Password: 
+1&gt; Select Name FROM Master.dbo.SysDatabases orDER BY Name;
+2&gt; go
+Name                                                   
+----------------------------------------------------------------
+master                                                                                                                          
+model                                                                                                                           
+msdb                                                                                                                            
+tempdb                                                                                                                          
+
+(4 rows affected)
+</code></pre>
+<h2 id="开启防火墙">开启防火墙</h2>
+<pre><code class="language-bash">firewall-cmd --permanent --zone=public --add-service=mssql &amp;&amp; firewall-cmd --reload
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/duo-wang-qia-ju-he/" class="post-title gt-a-link">
+                    多网卡聚合
+                </a>
+            </div>
+        
+
+        
+            <span id="/post/mssql-for-linux/" class="leancloud_visitors" data-flag-title="Linux 安装Microsoft SQL Server">
+                <em class="post-meta-item-text">阅读量 </em>
+                <i class="leancloud-visitors-count">0</i>
+            </span>
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'MFwwJiU2pUv2pA4mDNQ0BcU7-gzGzoHsz',
+		appKey: 'rXNBtlfwzcD1pTPPJcvBadEg',
+		avatar: '',
+		pageSize: 10,
+		recordIp: true,
+		placeholder: 'Just Go Go',
+		visitor: true,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first"></div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

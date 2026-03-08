@@ -1,0 +1,617 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Cloudreve 部署脚本 | Konvict&#39;s Notebook</title>
+
+<link rel="shortcut icon" href="https://konvict.github.io/favicon.ico?v=1772949336325">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://konvict.github.io/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Konvict&#39;s Notebook
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+                <div class="nav-item">
+                    
+                        <a href="/" class="menu gt-a-link">
+                            首页
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/archives" class="menu gt-a-link">
+                            归档
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/tags" class="menu gt-a-link">
+                            标签
+                        </a>
+                    
+                </div>
+            
+                <div class="nav-item">
+                    
+                        <a href="/post/about" class="menu gt-a-link">
+                            关于
+                        </a>
+                    
+                </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1772949336325" action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Cloudreve 部署脚本
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2026-02-07 ·
+                    </time>
+                    
+                </div>
+                <div class="post-content">
+                    <p>cloudreve安装脚本，支持Fedora和Debian。<br>
+包含docker、docker compose、以及二进制文件安装方式。<br>
+包含 数据库设置、SSL设置。<br>
+docker compose安装方式采用Github Repo 内的<a href="https://github.com/cloudreve/cloudreve">docker-compose.yml</a>文件</p>
+<p><em>懒得测试，就这样吧</em></p>
+<pre><code class="language-bash">#!/bin/bash
+# cloudreve.sh
+# Copyright (c) [2026] [Konvict Liu / https://konvict.cn]
+# 2026-02-07
+# License:   Mozilla Public  License, v. 2.0
+# 根据MPL 2.0的要求，对本文件的任何修改必须在文件开头明确说明。
+# https://www.mozilla.org/en-US/MPL/2.0/
+
+tarURL=&quot;https://github.com/cloudreve/cloudreve/releases/download/4.13.0/cloudreve_4.13.0_linux_amd64.tar.gz&quot;
+# shellcheck  disable=SC1091
+source /etc/os-release
+
+if [[ $(id -u) -ne 0 ]]; then
+	echo &quot;Please run as root&quot;
+	exit 1
+fi
+
+Color_Text() {
+	echo -e &quot; \e[0;$2m$1\e[0m&quot;
+}
+
+Echo_Red() {
+	echo $(Color_Text &quot;$1&quot; &quot;31&quot;)
+}
+
+Echo_Green() {
+	echo $(Color_Text &quot;$1&quot; &quot;32&quot;)
+}
+
+Echo_Yellow() {
+	echo $(Color_Text &quot;$1&quot; &quot;33&quot;)
+}
+
+Echo_Blue() {
+	echo $(Color_Text &quot;$1&quot; &quot;34&quot;)
+}
+systemDistroVersion() {
+	if [[ ${ID} == &quot;debian&quot; ]]; then
+		Echo_Green &quot;Debian detected&quot;
+		packageManager=&quot;apt&quot;
+	elif [[ ${ID} == &quot;fedora&quot; ]]; then
+		Echo_Green &quot;Fedora detected&quot;
+		packageManager=&quot;dnf&quot;
+	else
+		Echo_Red &quot;Unsupported OS&quot;
+		Echo_Red &quot;This script only supports Fedora  and Debian.&quot;
+		Echo_Red &quot;Exiting&quot;
+		exit 1
+	fi
+
+	Echo_Blue &quot;Detecting System Version...&quot;
+
+	if [[ ${ID} == &quot;fedora&quot; ]]; then
+		Echo_Green &quot;Fedora ${VERSION_ID} detected&quot;
+	elif [[ ${ID} == &quot;debian&quot; ]]; then
+		Echo_Green &quot;Debian ${VERSION_ID} detected&quot;
+	fi
+}
+
+installMethod() {
+	echo &quot;Please select the installation method:&quot;
+	echo &quot;1. Install with systemd (Defalut)&quot;
+	echo &quot;2. Install with Docker&quot;
+	echo &quot;3. Install with Docker Compose&quot;
+	echo &quot;4. Exit&quot;
+	read -rp &quot;Enter your choice: &quot; installMethod=&quot;${installMethod:-1}&quot;
+}
+
+installDockerFedora() {
+	dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
+	dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	systemctl enable --now docker
+
+}
+
+installDockerDebian() {
+	apt remove $(dpkg --get-selections docker.io docker-compose docker-doc podman-docker containerd runc | cut -f1)
+	# Add Docker's official GPG key:
+	apt update &amp;&amp; apt install ca-certificates curl
+	install -m 0755 -d /etc/apt/keyrings &amp;&amp; curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+	chmod a+r /etc/apt/keyrings/docker.asc
+
+	# Add the repository to Apt sources:
+	tee /etc/apt/sources.list.d/docker.sources &lt;&lt;EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(source /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;)
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+	apt update &amp;&amp; apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	systemctl enable --now docker
+}
+
+installDocker() {
+	if [[ $(command -v docker) ]]; then
+		Echo_Green &quot;Docker already installed&quot;
+	else
+		Echo_Blue &quot;Installing Docker...&quot;
+		if [[ ${ID} == &quot;fedora&quot; ]]; then
+			installDockerFedora
+		elif [[ ${ID} == &quot;debian&quot; ]]; then
+			installDockerDebian
+		fi
+	fi
+}
+
+passwordWarning() {
+	Echo_Yellow &quot;Please input the database password.&quot;
+	Echo_Yellow &quot;The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.&quot;
+}
+
+chooseDatabase() {
+	echo &quot;Please select a database:&quot;
+	echo &quot;1. SQLite (default)&quot;
+	echo &quot;2. MySQL&quot;
+	echo &quot;3. PostgreSQL&quot;
+	echo &quot;4. MariaDB&quot;
+	read -rp &quot;Enter your choice: &quot; dbChoice
+	dbChoice=${dbChoice:-1}
+
+	read -rp &quot;Please enter the database host (default: localhost): &quot; dbHost
+	dbHost=${dbHost:-localhost}
+
+	read -rp &quot;Please enter the database port (default: 3306 for MySQL/MariaDB, 5432 for PostgreSQL): &quot; dbPort
+	if [[ -z &quot;$dbPort&quot; ]]; then
+		if [[ $dbChoice -eq 2 ]]; then
+			dbPort=3306
+		elif [[ $dbChoice -eq 3 ]]; then
+			dbPort=5432
+		elif [[ $dbChoice -eq 4 ]]; then
+			dbPort=3306
+		fi
+	fi
+
+	read -rp &quot;Please enter the database name (default: cloudreve): &quot; dbName
+	dbName=${dbName:-cloudreve}
+
+	read -rp &quot;Please enter the database username (default: root): &quot; dbUser
+	dbUser=${dbUser:-root}
+	passwordWarning
+	while true; do
+		read -rp &quot;Please enter the database password (default: empty): &quot; dbPassword
+		if [[ ${#dbPassword} -ge 8 &amp;&amp; &quot;$dbPassword&quot; == *[[:lower:]]* &amp;&amp; &quot;$dbPassword&quot; == *[[:upper:]]* &amp;&amp; &quot;$dbPassword&quot; == *[0-9]* &amp;&amp; &quot;$dbPassword&quot; == *[[:punct:]]* ]]; then
+			break
+		else
+			Echo_Red &quot;The password is not strong enough.&quot;
+			Echo_Red &quot;Please try again.&quot;
+		fi
+	done
+
+	echo &quot;Database configurations: &quot;
+	echo &quot;Type: $([[ $dbChoice -eq 1 ]] &amp;&amp; echo 'SQLite' || ([[ $dbChoice -eq 2 ]] &amp;&amp; echo 'MySQL' || ([[ $dbChoice -eq 4 ]] &amp;&amp; echo 'MariaDB' || echo 'PostgreSQL')))&quot;
+	echo &quot;Host: $dbHost&quot;
+	echo &quot;Port: $dbPort&quot;
+	echo &quot;Name: $dbName&quot;
+	echo &quot;User: $dbUser&quot;
+	echo &quot;Password: $dbPassword&quot;
+}
+configDBDocker() {
+	case $dbChoice in
+	1)
+		dbConfig=&quot;&quot;
+		;;
+	2)
+		dbConfig=&quot;-e CR_CONF_Database.Type=mysql -e CR_CONF_Database.Host=$dbHost -e CR_CONF_Database.Port=$dbPort -e CR_CONF_Database.Name=$dbName -e CR_CONF_Database.User=$dbUser -e CR_CONF_Database.Password=$dbPassword&quot;
+		;;
+	3)
+		# shellcheck disable=SC2034
+		dbConfig=&quot;-e CR_CONF_Database.Type=postgresql -e CR_CONF_Database.Host=$dbHost -e CR_CONF_Database.Port=$dbPort -e CR_CONF_Database.Name=$dbName -e CR_CONF_Database.User=$dbUser -e CR_CONF_Database.Password=$dbPassword&quot;
+		;;
+	4)
+		dbConfig=&quot;-e CR_CONF_Database.Type=mariadb -e CR_CONF_Database.Host=$dbHost -e CR_CONF_Database.Port=$dbPort -e CR_CONF_Database.Name=$dbName -e CR_CONF_Database.User=$dbUser -e CR_CONF_Database.Password=$dbPassword&quot;
+		;;
+	*)
+		Echo_Red &quot;Invalid database choice&quot;
+		exit 1
+		;;
+	esac
+}
+
+installCloudreveDocker() {
+	read -r -p &quot;please input the port you want to use for cloudreve (default: 5212): &quot; port
+	port=${port:-5212}
+	read -r -p &quot;please input the path you want to use for cloudreve (default: ~/cloudreve): &quot; cloudreveDataDir
+	cloudreveDataDir=${cloudreveDataDir:-${installDir}/data}
+	mkdir -p &quot;${cloudreveDataDir}&quot;
+	docker run -dit --name cloudreve \
+		--restart=unless-stopped \
+		-p &quot;${port}&quot;:5212 \
+		-v &quot;${cloudreveDataDir}&quot;:/cloudreve/data \
+		&quot;${dbConfig}&quot; \
+		cloudreve/cloudreve:latest
+	Echo_Green &quot;Cloudreve installed successfully&quot;
+	Echo_Green &quot;Cloudreve is running at: &quot;
+	for i in $(hostname -I); do echo &quot;http://$i:${port}&quot;; done
+	unset port cloudreveDataDir i
+}
+
+installCloudreveDockerCompose() {
+	Echo_Yellow &quot;Installing Cloudreve with Docker Compose...&quot;
+	Echo_Yellow &quot;Database file using PostgreSQL&quot;
+	Echo_Yellow &quot;Other services: Redis&quot;
+
+	read -r -p &quot;please input the port you want to use for cloudreve (default: 5212): &quot; port
+	port=${port:-5212}
+	mkdir -p &quot;${cloudreveDataDir}&quot;
+	cat &gt;docker-compose.yml &lt;&lt;EOF
+services:
+  cloudreve:
+    image: cloudreve/cloudreve:latest
+    container_name: cloudreve-backend
+    depends_on:
+      - postgresql
+      - redis
+    restart: unless-stopped
+    ports:
+      - ${port}:5212
+    environment:
+      - CR_CONF_Database.Type=postgres
+      - CR_CONF_Database.Host=postgresql
+      - CR_CONF_Database.User=cloudreve
+      - CR_CONF_Database.Name=cloudreve
+      - CR_CONF_Database.Port=5432
+      - CR_CONF_Redis.Server=redis:6379
+    volumes:
+      - backend_data:/cloudreve/data
+
+  postgresql:
+    # Best practice: Pin to major version. 
+    # NOTE: For major version jumps:
+    # backup &amp; consult https://www.postgresql.org/docs/current/pgupgrade.html 
+    image: postgres:17    
+    container_name: postgresql
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=cloudreve
+      - POSTGRES_DB=cloudreve
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  backend_data:
+  database_postgres:
+  redis_data:
+EOF
+	if docker compose up -d; then
+		Echo_Green &quot;Cloudreve installed successfully&quot;
+		Echo_Green &quot;Cloudreve is running at: &quot;
+		for i in $(hostname -I); do echo &quot;http://$i:${port}&quot;; done
+		unset port cloudreveDataDir i
+	else
+		Echo_Red &quot;Failed to start cloudreve&quot;
+		exit 1
+	fi
+
+}
+
+chooseInstallDir() {
+	read -r -p &quot;Please input the installation directory for cloudreve (default: /opt/cloudreve): &quot; installDir
+	installDir=${installDir:-/opt/cloudreve}
+}
+
+# Download and extract the tarball
+installCloudreveBinary() {
+	wget ${tarURL}
+
+	if [[ -d ${installDir} ]]; then
+		:
+	else
+		mkdir -p &quot;${installDir}&quot;
+		tar -xzf cloudreve_4.13.0_linux_amd64.tar.gz -C &quot;${installDir}&quot;
+	fi
+}
+
+configFilePath() {
+	read -r -p &quot;please input the path you want to use for cloudreve (default: ~/cloudreve): &quot; cloudreveDataDir
+	cloudreveDataDir=${cloudreveDataDir:-${installDir}/data}
+	read -r -p &quot;Please input the path you want to use for cloudreve (Full path with file name. Default: ${cloudreveDataDir}/config.ini): &quot; cloudreveConfigFilePath
+	cloudreveConfigFilePath=${cloudreveConfigFilePath:-${cloudreveDataDir}/config.ini}
+	# shellcheck disable=SC2034
+	if [[ ${cloudreveConfigFilePath} == &quot;${cloudreveDataDir}/config.ini&quot; ]]; then
+		cloudreveArgs=&quot;&quot;
+	else
+		cloudreveArgs=&quot;-c ${cloudreveConfigFilePath} &quot;
+	fi
+}
+defaultConfigFile() {
+	cat &gt;&quot;${cloudreveConfigFilePath}&quot; &lt;&lt;EOF
+[System]
+Debug = false
+Mode = master
+Listen = :5212
+SessionSecret = oOozI3MOb5JYXxuirRuoxgYU3hwZHk4oM5g1d44cGZ7jU2bMzKFmNAK11L8u9kWp
+HashIDSalt = {HashIDSalt}
+ProxyHeader = X-Forwarded-For
+[UnixSocket]
+Listen = /run/cloudreve/cloudreve.sock
+Perm = 0666
+EOF
+}
+configDBBinary() {
+	if [[ $dbChoice -eq 1 ]]; then
+		dbConfig=&quot;&quot;
+	elif [[ $dbChoice -eq 2 ]]; then # MySQL
+		cat &gt;&gt;&quot;${cloudreveConfigFilePath}&quot; &lt;&lt;EOF
+[Database]
+Type = mysql
+Host = ${dbHost}
+Port = ${dbPort}
+Name = ${dbName}
+User = ${dbUser}
+Password = ${dbPassword}
+EOF
+	elif [[ $dbChoice -eq 4 ]]; then # MariaDB
+		cat &gt;&gt;&quot;${cloudreveConfigFilePath}&quot; &lt;&lt;EOF
+[Database]
+Type = mariadb
+Host = ${dbHost}
+Port = ${dbPort}
+Name = ${dbName}
+User = ${dbUser}
+Password = ${dbPassword}
+EOF
+	else # PostgreSQL
+		cat &gt;&gt;&quot;${cloudreveConfigFilePath}&quot; &lt;&lt;EOF
+[Database]
+Type = postgresql
+Host = ${dbHost}
+Port = ${dbPort}    
+Name = ${dbName}
+User = ${dbUser}
+Password = ${dbPassword}
+EOF
+	fi
+}
+
+# Create systemd service
+createSystemdService() {
+	Echo_Yellow &quot;Creating systemd service...&quot;
+	systemdFile=&quot;/etc/systemd/system/cloudreve.service&quot;
+	cat &gt;&quot;${systemdFile}&quot; &lt;&lt;EOF
+[Unit]
+Description=Cloudreve
+Documentation=https://docs.cloudreve.org
+After=network.target
+After=mysqld.service
+Wants=network.target
+
+[Service]
+WorkingDirectory=${installDir}
+ExecStart=${installDir}/cloudreve  ${cloudreveArgs}
+Restart=on-abnormal
+RestartSec=5s
+KillMode=mixed
+
+# 日志输出
+StandardOutput=/var/log/cloudreve.log
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+sslConfig() {
+	read -r -p &quot;Do you want to enable SSL? (y/N): &quot; enableSSL
+	enableSSL=${enableSSL:-N}
+	if [[ $enableSSL == [Yy] ]]; then
+		read -r -p &quot;Please input the path to your SSL certificate file (default: /etc/ssl/certs/cloudreve.crt): &quot; sslCertPath
+		sslCertPath=${sslCertPath:-/etc/ssl/certs/cloudreve.crt}
+		read -r -p &quot;Please input the path to your SSL key file (default: /etc/ssl/private/cloudreve.key): &quot; sslKeyPath
+		sslKeyPath=${sslKeyPath:-/etc/ssl/private/cloudreve.key}
+		read -r -p &quot;please input the HTTPS port you want to use for cloudreve (default: 443): &quot; httpsPort
+		httpsPort=${httpsPort:-443}
+
+		cat &gt;&gt;&quot;${cloudreveConfigFilePath}&quot; &lt;&lt;EOF
+[SSL]
+Listen = :${httpsPort}
+CertPath = ${sslCertPath} ; 证书文件路径
+KeyPath = ${sslKeyPath} ; 私钥文件路径
+EOF
+	fi
+}
+# Enable and start the service
+enableAndStartService() {
+	systemctl daemon-reload &amp;&amp; systemctl enable --now cloudreve
+}
+
+systemDistroVersion
+installMethod
+
+if [[ ${installMethod} = 1 ]]; then
+	chooseInstallDir
+	installCloudreveBinary
+	configFilePath
+	defaultConfigFile
+	chooseDatabase
+	configDBBinary
+	sslConfig
+	createSystemdService
+	enableAndStartService
+elif [[ ${installMethod} = 2 ]]; then
+	installDocker
+	chooseDatabase
+	configDBDocker
+	installCloudreveDocker
+elif [[ ${installMethod} = 3 ]]; then
+	installDocker
+	chooseDatabase
+	installCloudreveDockerCompose
+else
+	Echo_Red &quot;Invalid installation method&quot;
+	exit 1
+fi
+
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://konvict.github.io/post/mssql-for-linux/" class="post-title gt-a-link">
+                    Linux 安装Microsoft SQL Server
+                </a>
+            </div>
+        
+
+        
+            <span id="/post/cloudreve-bu-shu-jiao-ben/" class="leancloud_visitors" data-flag-title="Cloudreve 部署脚本">
+                <em class="post-meta-item-text">阅读量 </em>
+                <i class="leancloud-visitors-count">0</i>
+            </span>
+        
+
+        
+
+        
+            <script src='https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js'></script>
+
+<style>
+	div#vcomments{
+		width:100%;
+		max-width: 1000px;
+		padding: 2.5%
+	}
+</style>
+
+
+	<div id="vcomments"></div>
+
+<script>
+	new Valine({
+		el: '#vcomments',
+		appId: 'MFwwJiU2pUv2pA4mDNQ0BcU7-gzGzoHsz',
+		appKey: 'rXNBtlfwzcD1pTPPJcvBadEg',
+		avatar: '',
+		pageSize: 10,
+		recordIp: true,
+		placeholder: 'Just Go Go',
+		visitor: true,
+	});
+</script>
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first"></div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备19043540号-2</a>
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://konvict.github.io/atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
